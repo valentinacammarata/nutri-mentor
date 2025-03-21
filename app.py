@@ -1,3 +1,2 @@
-print('hello group 11.7')
-
-print('daniel was here')
+import streamlit as st
+st.title("NutriMentor")
