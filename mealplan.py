@@ -3,7 +3,7 @@ import requests # for API calls
 
 st.title("Meal Plan and Recipes Generator") # this is the title of the web app
 
-API_KEY = "90b09bab8e0246a9a6945eb16e4e6f61"                   # this is my personal API key (Spoonacular)
+API_KEY = "my personal key"                   # this is my personal API key (Spoonacular)
 
 # Function to fetch recipes based on diet and goal
 def get_recipes(diet, goal, cuisine):        # this function fetches recipes based on the user's dietary preference and goal
