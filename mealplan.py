@@ -1,11 +1,15 @@
 import streamlit as st
 import requests # for API calls
+from dotenv import load_dotenv
+import os
 
-st.title("Meal Plan and Recipes Generator") # this is the title of the web app
+load_dotenv()  # This loads everything from your .env file
 
-API_KEY = "my personal key"                   # this is my personal API key (Spoonacular)
+API_KEY = os.getenv("API_KEY")  # This grabs the key from the .env file
 
-# Function to fetch recipes based on diet and goal
+st.title("Meal Plan and Recipes Generator") # this is the title of the web app                  
+st.write("Welcome to the Meal Plan and Recipes Generator! This page helps you find personalized recipes based on your dietary preferences and goals.") # this is the description of the web app
+
 def get_recipes(diet, goal, cuisine):        # this function fetches recipes based on the user's dietary preference and goal
 
     calorie_ranges = {                       # this is a dictionary that contains the calorie ranges for each goal
