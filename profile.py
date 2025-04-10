@@ -12,7 +12,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 # Lokales Bild (im gleichen Ordner wie profile.py)
-image_path = "/images/image.png"
+image_path = "images/image.png"
 if os.path.isfile(image_path):
     img_base64 = get_base64_of_bin_file(image_path)
 else:
