@@ -122,8 +122,8 @@ if group_base64:
 col1, col2, col3 = st.columns([1, 0.3, 1])
 with col2:
     st.markdown("<div style='display: flex; justify-content: center; margin-top: 60px;'>", unsafe_allow_html=True)
-    if st.button("CREATE YOUR FREE PROFILE!"):
-        st.switch_page("pages/profile.py")
+    if st.button("CREATE YOUR FREE PROFILE!", key="create_profile_button"):
+        st.switch_page("pages/profilecreation.py")
 
 # Fußzeile mit Ankerziel für Pfeil oben
 st.markdown("""
@@ -166,5 +166,15 @@ div[style*='text-align: center; margin-top: -40px;'] {
 .footer {
     margin-top: 200px; /* Move the footer further down */
 }
+</style>
+""", unsafe_allow_html=True)
+
+
+# Hide the sidebar by default
+st.markdown("""
+<style>
+    [data-testid="stSidebar"] {
+        display: none;
+    }
 </style>
 """, unsafe_allow_html=True)
