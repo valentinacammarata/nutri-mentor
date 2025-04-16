@@ -1,4 +1,6 @@
 import streamlit as st
+import time
+import streamlit.components.v1 as components
 
 # Seitenkonfiguration
 st.set_page_config(page_title="Profile Creation", layout="centered", initial_sidebar_state="collapsed")
@@ -7,7 +9,8 @@ st.set_page_config(page_title="Profile Creation", layout="centered", initial_sid
 st.markdown("""
     <style>
         .stApp {
-            background-color: #0e3e22;  /* Dunkelgrün */    
+            background-color: #0e3e22;  /* Dunkelgrün */
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -45,10 +48,8 @@ with st.form("profile_form"):
         <p style='text-align: center; font-size: 18px; color: #ffffff;'>Thank you, {name}! Your profile has been created.</p>
         """, unsafe_allow_html=True)
         st.balloons()
+        # Animation (optional Visual Feedback)
+        with st.spinner("Redirecting to your profile view..."):
+            time.sleep(3)  # Simulate a delay for the spinner
+        st.switch_page("pages/profile_view.py")
 
-# Hinweis zur Navigation (nur anzeigen, wenn Formular abgeschickt wurde)
-if 'submitted' in locals() and submitted:
-    st.markdown("""
-        <hr style='margin: 40px 0; border-color: #ffffff;'>
-        <p style='text-align: center; font-size: 14px; color: #ffffff;'>You can now proceed to the Meal Plan section from the menu on the left.</p>
-    """, unsafe_allow_html=True)
