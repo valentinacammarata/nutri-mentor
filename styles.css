@@ -1,0 +1,89 @@
+/* Hide Streamlit's default header and footer */
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+header { visibility: hidden; }
+
+/* Page background */
+.stApp {
+    background-color: #d4edda;
+}
+
+/* Title styling */
+.title {
+    text-align: center;
+    font-size: 40px !important;
+    color: #3E8E41;
+    font-weight: bold;
+    margin: 20px auto 20px auto;
+}
+
+/* Description styling */
+div.stMarkdown .description {
+    text-align: center;
+    font-size: 20px !important;
+    color: #555555;
+    font-style: italic;
+    margin: 40px auto 20px auto;
+}
+
+/* Line separator */
+.separator {
+    border-top: 2px solid #3E8E41;
+    width: 50%;
+    margin: 40px auto 20px auto;
+}
+
+/* Subtitle styling */
+div.stMarkdown .subtitle {
+    font-size: 20px;
+    color: #3E8E41;
+    margin: 20px auto 20px auto;
+    text-align: center;
+}
+
+/* Container to center the checkbox */
+div.stCheckbox {
+    display: flex;
+    justify-content: center;  /* Horizontally center the checkbox */
+    align-items: center;      /* Vertically center the checkbox */
+    height: auto;             /* Adjusts height based on content */
+    text-align: center;
+    margin-top: 20px;         /* Optional: adds some space above the checkbox */
+}
+
+/* Button styling */
+div.stButton {
+    display: flex;
+    justify-content: center;  /* Horizontally center the button */
+    align-items: center;      /* Vertically center the button */
+    height: auto;             /* Automatically adjust height based on content */
+    text-align: center;
+    margin-top: 20px;         /* Optional: adds some space above the button */
+}
+
+div.stButton > button {
+    background-color: transparent;
+    color: #3E8E41;
+    font-size: 16px;
+    padding: 10px 24px;
+    border: 3px solid #3E8E41;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    margin: 0 auto;  /* Center the button horizontally */
+}
+
+div.stButton > button:hover {
+    background-color: #3E8E41;
+    color: white;
+    border-color: #3E8E41;
+}
+
+
+/* Recipe card */
+.recipe-card {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
