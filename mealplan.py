@@ -2,6 +2,7 @@ import streamlit as st
 import requests # for API calls
 from dotenv import load_dotenv # for loading environment variables
 import os
+import time # for the spinner effect
 
 load_dotenv()  # This loads everything from the .env file
 
@@ -57,6 +58,14 @@ def display_recipe_details(details):            # this function displays the det
     for label, value in attributes:     # this loops through the attributes of the recipe and displays them
         st.markdown(f"<p style='margin: 0;'><b>{label}:</b> {value}</p>", unsafe_allow_html=True)
 
+def get_wine_pairing_for_food(food_name):
+    url = f"https://api.spoonacular.com/food/wine/pairing?food={food_name}&apiKey={API_KEY}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {}  # fallback if the request fails
+
 recipes = [] # this is an empty list that will be used to store the recipes fetched from the API
 
 st.markdown('<p class="subtitle">Your Preferences</p>', unsafe_allow_html=True) 
@@ -79,9 +88,20 @@ if st.button("🧑🏼‍🍳 Serve the Recipies!"):                            
     diet = "" if diet == "None" else diet.lower()
     goal = "" if goal == "None" else goal.lower()
     cuisine = "" if cuisine == "Any" else cuisine.lower()
-    dish_type = "" if dish_type == "Any" else dish_type.lower()
+    dish_type_map = {
+        "Appetizer": "appetizer",
+        "Side Dish": "side dish",
+        "Lunch": "main course",
+        "Dinner": "main course",
+        "Snack": "snack",
+        "Dessert": "dessert"
+    }
+
+    dish_type = "" if dish_type == "Any" else dish_type_map.get(dish_type, "")
+
 
     with st.spinner("Cooking up some recipes... 🍽️"):           # this shows a loading spinner while recipies are fetched
+        time.sleep(3)  # Simulate a delay for the spinner effect
         recipes = get_recipes(diet, goal, cuisine, dish_type)   # this calls the get_recipes function and stores the results in the recipes list
     
     st.session_state["recipes"] = recipes     
@@ -91,74 +111,95 @@ else:
 
 if recipes:                                                 # this checks if there are any recipes in the list
     st.subheader("Here are some recipes based on your preferences:")
-    for recipe in recipes:                                  # this loops through the recipes and displays them
-        with st.container():    
-            st.markdown('<div class="recipe-card">', unsafe_allow_html=True)    # this creates a card for each recipe (for the styling)
+    
+    if goal == "Eat healthier":
+        recipes = [r for r in recipes if r.get("healthScore", 0) >= 80]
+    if not recipes:
+        st.warning("No healthy recipes found with a health score of 80 or more.")
+    else:
+        for recipe in recipes:          # this loops through the recipes and displays them
+            details = get_recipe_details(recipe["id"])
+            
+            if goal.lower() == "eat healthier" and details.get("healthScore", 0) < 80:
+                continue
+
+            with st.container():    
+                st.markdown('<div class="recipe-card">', unsafe_allow_html=True)    # this creates a card for each recipe (for the styling)
                                             
-            col1, col2 = st.columns([1, 3])                 # Show title and image upfront
-            with col1:
-                st.image(recipe["image"], width=150)
-            with col2:
-                st.markdown(f"### {recipe['title']}")
+                col1, col2 = st.columns([1, 3])                 # Show title and image upfront
+                with col1:
+                    st.image(recipe["image"], width=150)
+                with col2:
+                    st.markdown(f"### {recipe['title']}")
 
-            with st.expander("See the ingredients and instructions for this recipe"):   # this creates an expander that shows the ingredients and instructions for the recipe
-                details = get_recipe_details(recipe["id"])
-
-                if details:         # this includes the details (ingredients and instructions) of the recipe
-                    if not details:         # Check if the details are empty (or None)
-                        st.error("Could not fetch recipe details for this recipe.")
-                        continue 
+                with st.expander("See the ingredients and instructions for this recipe"):   # this creates an expander that shows the ingredients and instructions for the recipe
+                      # Skip this recipe if it's not healthy enough
                     
-                    display_recipe_details(details)     # this calls the function that displays the details of the recipe (defined earlier)
+                    if details:         # this includes the details (ingredients and instructions) of the recipe
+                        if not details:         # Check if the details are empty (or None)
+                            st.error("Could not fetch recipe details for this recipe.")
+                            continue 
+                    
+                        display_recipe_details(details)     # this calls the function that displays the details of the recipe (defined earlier)
 
-                    st.markdown("### Ingredients")      # this shows the ingredients for the recipe
-                    ingredients = [f"- {ing['original']}" for ing in details.get("extendedIngredients", [])]
-                    st.write("\n".join(ingredients))
+                        st.markdown("### Ingredients")      # this shows the ingredients for the recipe
+                        ingredients = [f"- {ing['original']}" for ing in details.get("extendedIngredients", [])]
+                        st.write("\n".join(ingredients))
 
-                    st.markdown("### Instructions")     # this shows the instructions for the recipe
-                    instructions = details.get("analyzedInstructions", [])
-                    if instructions:
-                        steps = [f"{step['number']}. {step['step']}" for step in instructions[0].get("steps", [])]
-                        st.write("\n".join(steps))
-                    else:
-                        st.info("No instructions available.")
-
-                    diet_flags = {                  # this creates a dictionary that contains the diet flags for the recipe
-                        "Vegetarian": details.get("vegetarian"),
-                        "Vegan": details.get("vegan"),
-                        "Gluten-Free": details.get("glutenFree"),
-                        "Dairy-Free": details.get("dairyFree"),
-                        "Healthy": details.get("veryHealthy"),
-                        "Cheap": details.get("cheap"),
-                        "Sustainable": details.get("sustainable"),
-                        "Popular": details.get("veryPopular")
-                    }
-
-                    active_diets = [key for key, value in diet_flags.items() if value]     # this creates a list of the active diet flags for the recipe
-
-                    st.markdown(                    # this shows the active diet flags for the recipe
-                        f"<p style='margin: 0;'><b>Tags:</b> {', '.join(active_diets) if active_diets else 'None'}</p>",
-                        unsafe_allow_html=True
-                    )
-
-                    # Optional Wine Pairing: if a user selects the checkbox, wine pairing suggestions are loaded and displayed below the recipe
-                    if get_wine_pairing:
-                        wine_info = details.get("winePairing", {})
-                        wines = wine_info.get("pairedWines", [])
-                        note = wine_info.get("pairingText", "")     # note: this is the text that describes the wine pairing
-
-                        if wines:
-                            st.markdown(
-                                f"<p style='margin: 0;'><b>Suggested Wines:</b> {', '.join(wines)}</p>",
-                                unsafe_allow_html=True
-                            )
-                            if note:        # if there is text that describes the wine pairing, it is displayed below the suggested wines
-                                st.markdown(f"<p style='margin: 0;'>{note}</p>", unsafe_allow_html=True)
+                        st.markdown("### Instructions")     # this shows the instructions for the recipe
+                        instructions = details.get("analyzedInstructions", [])
+                        if instructions:
+                            steps = [f"{step['number']}. {step['step']}" for step in instructions[0].get("steps", [])]
+                            st.write("\n".join(steps))
                         else:
-                            st.markdown("<p style='margin: 0;'><b>Wine Pairing:</b> Not available</p>", unsafe_allow_html=True)    
-                else:
-                    st.error("Could not load recipe details.")
+                            st.info("No instructions available.")
+
+                        diet_flags = {                  # this creates a dictionary that contains the diet flags for the recipe
+                            "Vegetarian": details.get("vegetarian"),
+                            "Vegan": details.get("vegan"),
+                            "Gluten-Free": details.get("glutenFree"),
+                            "Dairy-Free": details.get("dairyFree"),
+                            "Healthy": details.get("veryHealthy"),
+                            "Cheap": details.get("cheap"),
+                            "Sustainable": details.get("sustainable"),
+                            "Popular": details.get("veryPopular")
+                        }
+                        active_diets = [key for key, value in diet_flags.items() if value]
+
+                        st.markdown(
+                            f"<p style='margin: 0;'><b>Tags:</b> {', '.join(active_diets) if active_diets else 'None'}</p>",
+                            unsafe_allow_html=True
+                        )
+
+                        # Optional Wine Pairing: if a user selects the checkbox, wine pairing suggestions are loaded and displayed below the recipe
+                        if get_wine_pairing:
+                            
+                            # Step 1: Try to extract a food-type keyword from dishTypes
+                            dish_types = recipe.get("dishTypes", [])
+                            if dish_types:
+                                main_food = dish_types[0]
+                            else:
+                            # Step 2: Try to use a more meaningful part of the title 
+                                words = recipe.get("title", "").lower().split()
+                                keywords = ["chicken", "beef", "salmon", "pasta", "cheese", "steak", "shrimp", "lamb", "pork", "vegetable", "salad", "soup", "pizza", "taco", "burger", "tuna", "mushroom"]
+                                main_food = next((word for word in words if word in keywords), "food")  # fallback to "food"
+
+                            wine_data = get_wine_pairing_for_food(main_food.lower())
+                            wines = wine_data.get("pairedWines", [])
+                            note = wine_data.get("pairingText", "") 
+
+                            if wines:
+                                st.markdown(
+                                    f"<p style='margin: 0;'><b>Suggested Wines:</b> {', '.join(wines)}</p>",
+                                    unsafe_allow_html=True
+                                )
+                                if note:
+                                    st.markdown(f"<p style='margin: 0;'>{note}</p>", unsafe_allow_html=True)
+                            else:
+                                st.markdown("<p style='margin: 0;'><b>Wine Pairing:</b> Not available</p>", unsafe_allow_html=True)    
+                    else:
+                        st.error("Could not load recipe details.")
                 
-            st.markdown('</div>', unsafe_allow_html=True)    # this closes the recipe card div (for the styling)
+                st.markdown('</div>', unsafe_allow_html=True)    # this closes the recipe card div (for the styling)      
 else:
     st.empty ()  # this shows an empty space if there are no recipes in the list
