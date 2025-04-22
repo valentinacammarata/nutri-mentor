@@ -46,13 +46,26 @@ def get_recipe_details(recipe_id):      # this function fetches the details of a
         st.error("Failed to fetch recipe details.")
         return {}
 
-def display_recipe_details(details):            # this function displays the details of a specific recipe, this replaces a lot of the code in the main function
-    attributes = [
+def display_recipe_details(details):   # this function displays the details of a recipe
+    
+    diet_flags = {
+        "Vegetarian": details.get("vegetarian"),
+        "Vegan": details.get("vegan"),
+        "Gluten-Free": details.get("glutenFree"),
+        "Dairy-Free": details.get("dairyFree"),
+        "Healthy": details.get("veryHealthy"),
+        "Cheap": details.get("cheap"),
+        "Sustainable": details.get("sustainable"),
+        "Popular": details.get("veryPopular")
+    }
+    
+    active_diets = [key for key, value in diet_flags.items() if value] # get the active diet tags based on the details of the recipe
+    
+    attributes = [                                                      # this is a list of attributes that will be displayed for each recipe
         ("Ready in", f"{details['readyInMinutes']} min"),
         ("Servings", details['servings']),
         ("Health Score", f"{int(details['healthScore'])} / 100"),
-        ("Price per serving", f"{details['pricePerServing'] / 100:.2f} €"),
-        ("Dish Type", ', '.join(details.get('dishTypes', [])))
+        ("Diet Tags", ', '.join(active_diets) if active_diets else 'None')
     ]
     
     for label, value in attributes:     # this loops through the attributes of the recipe and displays them
@@ -101,7 +114,7 @@ if st.button("🧑🏼‍🍳 Serve the Recipies!"):                            
 
 
     with st.spinner("Cooking up some recipes... 🍽️"):           # this shows a loading spinner while recipies are fetched
-        time.sleep(3)  # Simulate a delay for the spinner effect
+        time.sleep(2)  # Simulate a delay for the spinner effect
         recipes = get_recipes(diet, goal, cuisine, dish_type)   # this calls the get_recipes function and stores the results in the recipes list
     
     st.session_state["recipes"] = recipes     
@@ -153,23 +166,6 @@ if recipes:                                                 # this checks if the
                             st.write("\n".join(steps))
                         else:
                             st.info("No instructions available.")
-
-                        diet_flags = {                  # this creates a dictionary that contains the diet flags for the recipe
-                            "Vegetarian": details.get("vegetarian"),
-                            "Vegan": details.get("vegan"),
-                            "Gluten-Free": details.get("glutenFree"),
-                            "Dairy-Free": details.get("dairyFree"),
-                            "Healthy": details.get("veryHealthy"),
-                            "Cheap": details.get("cheap"),
-                            "Sustainable": details.get("sustainable"),
-                            "Popular": details.get("veryPopular")
-                        }
-                        active_diets = [key for key, value in diet_flags.items() if value]
-
-                        st.markdown(
-                            f"<p style='margin: 0;'><b>Tags:</b> {', '.join(active_diets) if active_diets else 'None'}</p>",
-                            unsafe_allow_html=True
-                        )
 
                         # Optional Wine Pairing: if a user selects the checkbox, wine pairing suggestions are loaded and displayed below the recipe
                         if get_wine_pairing:
