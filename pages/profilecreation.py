@@ -9,7 +9,7 @@ st.set_page_config(page_title="Profile Creation", layout="centered", initial_sid
 # Hintergrundfarbe
 st.markdown("""
     <style>
-        .stApp { background-color: #0e3e22; }
+        .stApp { background-color: #a9dfbf; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -34,7 +34,7 @@ with st.form("profile_form"):
     gender = st.selectbox("Gender", ["Select", "Male", "Female", "Other"])
     
     st.markdown("<p style='color: #ffffff; font-size: 16px;'>What are your health goals?</p>", unsafe_allow_html=True)
-    goal_options = ["Lose Weight", "Build Muscle", "Or just eat Healthier :)"]
+    goal_options = ["Lose Weight", "Build Muscle", "just eat Healthier :)"]
     selected_goals = st.multiselect("Select your goals", goal_options)
 
     st.markdown("<p style='color: #ffffff; font-size: 16px;'>Dietary Preference</p>", unsafe_allow_html=True)
