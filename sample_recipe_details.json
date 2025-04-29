@@ -1,0 +1,40 @@
+{
+    "id": 1,
+    "title": "Healthy Avocado Salad",
+    "readyInMinutes": 15,
+    "servings": 2,
+    "healthScore": 90,
+    "vegetarian": true,
+    "vegan": true,
+    "glutenFree": true,
+    "dairyFree": true,
+    "veryHealthy": true,
+    "cheap": false,
+    "sustainable": false,
+    "veryPopular": true,
+    "nutrition": {
+      "nutrients": [
+        { "name": "Calories", "amount": 250 },
+        { "name": "Fat", "amount": 18 },
+        { "name": "Carbohydrates", "amount": 15 },
+        { "name": "Protein", "amount": 6 }
+      ]
+    },
+    "extendedIngredients": [
+      { "original": "1 ripe avocado" },
+      { "original": "1 cup mixed greens" },
+      { "original": "1 tbsp olive oil" },
+      { "original": "1 tsp lemon juice" }
+    ],
+    "analyzedInstructions": [
+      {
+        "steps": [
+          { "number": 1, "step": "Slice the avocado." },
+          { "number": 2, "step": "Mix greens with olive oil and lemon juice." },
+          { "number": 3, "step": "Top the salad with avocado slices." }
+        ]
+      }
+    ],
+    "dishTypes": ["salad"]
+  }
+  
