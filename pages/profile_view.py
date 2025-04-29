@@ -58,6 +58,8 @@ else:
     st.error("No profile data found. Please create your profile first.")
     st.stop()
 
+
+
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 # Profilübersicht
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
@@ -74,17 +76,46 @@ with st.container():
         st.metric("Diet", profile_data.get("diet", "N/A"))
     st.markdown("</div>", unsafe_allow_html=True)
 
+
+
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 # Gewichtstracker
 st.markdown("<h2 class='section-title'>🏋️ Weight Tracker</h2>", unsafe_allow_html=True)
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+st.markdown("""
+    <p style='text-align: center; font-size: 16px; color: black;'>
+        Keep track of your progress by logging your weight.<br>
+        Enter your current weight below to update your profile and monitor changes over time.
+    </p>
+""", unsafe_allow_html=True)
+
 with st.container():
     date = st.date_input("🗓️ Select Date", datetime.date.today())
     weight = st.number_input("Your Current Weight (kg)", min_value=30.0, max_value=200.0, step=0.5)
-    st.success(f"Weight of {weight} kg logged for {date}.")
+
+    if st.button("Log Weight"):
+        profile_data["weight"] = float(weight)
+        profile_data["date"] = str(date)
+        with open("profile_data.json", "w") as f:
+            json.dump(profile_data, f)
+        st.success(f"Weight of {weight} kg logged for {date}.")
+
+# Gewichtsanalyse Navigation direkt dort hin
+st.markdown("<h3 style='text-align: center;'>📈 Full Weight Analysis</h3>", unsafe_allow_html=True)
+st.markdown("""
+    <p style='text-align: center; font-size: 16px;'>
+        Here you can view your full weight history and track important trends over time.
+    </p>
+""", unsafe_allow_html=True)
+
+# Zentrierter Button in der Mitte
+centered_col = st.columns(3)[1]
+with centered_col:
+    if st.button("🔍 Go to Weight Dashboard"):
+        st.switch_page("pages/app.py")
 
 
-st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top: 80px;'></div>", unsafe_allow_html=True)
 # BMI Rechner
 st.markdown("<h2 class='section-title'>📊 Calculate your BMI</h2>", unsafe_allow_html=True)
 st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
