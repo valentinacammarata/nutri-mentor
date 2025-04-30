@@ -15,7 +15,7 @@ st.markdown("""
 
 # Überschrift
 st.markdown("""
-    <h1 style='text-align: center; color: #ffffff;'>Create Your Nutri Profile</h1>
+    <h1 style='text-align: center; color: #000000;'>Create Your Nutri Profile</h1>
     <p style='text-align: center; font-size: 20px; color: #ffffff;'>Let's get started on your personalized nutrition journey.</p>
     <hr style='margin: 30px 0; border-color: #ffffff;'>
 """, unsafe_allow_html=True)

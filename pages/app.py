@@ -8,15 +8,16 @@ import os
 st.set_page_config(page_title="Weight Tracker", layout="centered")
 
 # Title
-st.markdown("<h1 style='text-align: center;'>📉 Weight Tracker</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>📉 Data View</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Track your progress and stay motivated!</p>", unsafe_allow_html=True)
 
-#background color
+# Background color (same as in profilepage.py)
 st.markdown("""
     <style>
         .stApp { background-color: #a9dfbf; }
     </style>
 """, unsafe_allow_html=True)
+
 
 # File path
 DATA_FILE = "weight_data.csv"
@@ -52,8 +53,10 @@ if os.path.exists(PROFILE_FILE):
 if initial_entry_added:
     st.success(f"Initial weight entry from profile ({profile['weight']} kg on {profile['date']}) imported!")
 
+st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 # Dynamische Gewichtseingabe (Start mit 3, Button für mehr)
-st.header("➕ Enter Weights")
+st.markdown("<h2 style='text-align: center;'>➕ Enter Weights</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Tracking your weight regularly helps you monitor your health and achieve your fitness goals effectively.</p>", unsafe_allow_html=True)
 
 if "weight_rows" not in st.session_state:
     st.session_state.weight_rows = 3
@@ -85,8 +88,12 @@ if st.button("💾 Save All"):
         save_data(df)
         st.success(f"{len(weight_data)} entries saved! ✅")
 
+
+st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 # Visualization
-st.header("📊 Show Progress")
+st.markdown("<h2 style='text-align: center;'>📊 Show Progress</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Visualize your weight trends and stay on track with your goals.</p>", unsafe_allow_html=True)
+
 df = load_data()
 
 if not df.empty:
@@ -105,7 +112,74 @@ if not df.empty:
     st.subheader("📋 Table")
     st.dataframe(df, use_container_width=True)
 else:
-    st.info("No data available yet. Enter something to get started.")  
+    st.info("No data available yet. Enter something to get started.")
+
+# Advanced Section
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("""
+    <h1 style='text-align: center;'>🔬 Advanced Body Composition Tracking</h1>
+""", unsafe_allow_html=True)
+
+advanced = st.selectbox("", ["Hide", "Show"])
+if advanced == "Show":
+    # Body Fat
+    st.markdown("""
+        <h2 style='text-align: center;'>📉 Body Fat (%)</h2>
+        <p style='text-align: center;'>Track your body fat percentage over time.</p>
+    """, unsafe_allow_html=True)
+    with st.form("body_fat_form"):
+        bdate = st.date_input("📅 Date", value=datetime.today(), key="fat_date")
+        fat_vals = [st.slider(f"Body Fat % {i+1}", 5.0, 50.0, 20.0, key=f"fat_{i}") for i in range(3)]
+        submitted = st.form_submit_button("💾 Save Body Fat")
+        if submitted:
+            comp_df = load_body_composition() 
+            new_entry = pd.DataFrame([{"Date": bdate, "Body Fat": sum(fat_vals)/len(fat_vals)}])
+            comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
+            comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
+            save_body_composition(comp_df)
+            st.success("Body fat data saved!")
+    comp_df = load_body_composition()
+    if "Body Fat" in comp_df:
+        st.bar_chart(comp_df.set_index("Date")["Body Fat"])
+
+    # Muscle Mass
+    st.markdown("""
+        <h2 style='text-align: center;'>💪 Muscle Mass (%)</h2>
+        <p style='text-align: center;'>Follow your progress in building muscle mass.</p>
+    """, unsafe_allow_html=True)
+    with st.form("muscle_mass_form"):
+        mdate = st.date_input("📅 Date", value=datetime.today(), key="muscle_date")
+        muscle_vals = [st.slider(f"Muscle Mass % {i+1}", 10.0, 60.0, 35.0, key=f"muscle_{i}") for i in range(3)]
+        submitted = st.form_submit_button("💾 Save Muscle Mass")
+        if submitted:
+            comp_df = load_body_composition()
+            new_entry = pd.DataFrame([{"Date": mdate, "Muscle Mass": sum(muscle_vals)/len(muscle_vals)}])
+            comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
+            comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
+            save_body_composition(comp_df)
+            st.success("Muscle mass data saved!")
+    if "Muscle Mass" in comp_df:
+        st.bar_chart(comp_df.set_index("Date")["Muscle Mass"])
+
+    # Water Content
+    st.markdown("""
+        <h2 style='text-align: center;'>💧 Water Content (%)</h2>
+        <p style='text-align: center;'>Track hydration and body water balance.</p>
+    """, unsafe_allow_html=True)
+    with st.form("water_content_form"):
+        wdate = st.date_input("📅 Date", value=datetime.today(), key="water_date")
+        water_vals = [st.slider(f"Water Content % {i+1}", 30.0, 70.0, 50.0, key=f"water_{i}") for i in range(3)]
+        submitted = st.form_submit_button("💾 Save Water Content")
+        if submitted:
+            comp_df = load_body_composition()
+            new_entry = pd.DataFrame([{"Date": wdate, "Water Content": sum(water_vals)/len(water_vals)}])
+            comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
+            comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
+            save_body_composition(comp_df)
+            st.success("Water content data saved!")
+    if "Water Content" in comp_df:
+        st.bar_chart(comp_df.set_index("Date")["Water Content"])
+
 
     # Hide the sidebar by default
 st.markdown("""
