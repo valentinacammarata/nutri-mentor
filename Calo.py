@@ -377,13 +377,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 if st.button("☕ Go to Breakfast"):
-    switch_page("Breakfast")
+    st.switch_page("pages/Breakfast.py")
 
 if st.button("🥗 Go to Lunch"):
-    switch_page("Lunch")
+    st.switch_page("pages/Lunch.py")
 
 if st.button("🍝 Go to Dinner"):
-    switch_page("Dinner")
+    st.switch_page("pages/Dinner.py")
 
 if st.button("🍫 Go to Snack"):
-    switch_page("Snack")
+    st.switch_page("pages/Snack.py")
