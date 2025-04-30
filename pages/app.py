@@ -121,6 +121,8 @@ else:
     st.info("No data available yet. Enter something to get started.")
 
 # ================= ADVANCED BODY SECTION =================
+import matplotlib.pyplot as plt
+
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
     <h1 style='text-align: center;'>🔬 Advanced Body Composition Tracking</h1>
@@ -128,82 +130,103 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Initial states
-if "fat_entries" not in st.session_state:
-    st.session_state.fat_entries = 1
-if "muscle_entries" not in st.session_state:
-    st.session_state.muscle_entries = 1
-if "water_entries" not in st.session_state:
-    st.session_state.water_entries = 1
+for key, default in [("fat_entries", 1), ("muscle_entries", 1), ("water_entries", 1)]:
+    if key not in st.session_state:
+        st.session_state[key] = default
+
+# Safe loading of composition data
+def load_body_composition():
+    try:
+        if os.path.exists("body_composition.json") and os.path.getsize("body_composition.json") > 0:
+            return pd.read_json("body_composition.json")
+        else:
+            return pd.DataFrame(columns=["Date", "Body Fat", "Muscle Mass", "Water Content"])
+    except Exception:
+        return pd.DataFrame(columns=["Date", "Body Fat", "Muscle Mass", "Water Content"])
+
+def save_body_composition(df):
+    df.to_json("body_composition.json", orient="records")
 
 comp_df = load_body_composition()
-advanced = st.selectbox("", ["Hide", "Show"])
-if advanced == "Show":
 
-    # ========== BODY FAT ==========
-    st.markdown("<h2 style='text-align: center;'>📉 Body Fat (%)</h2>", unsafe_allow_html=True)
-    fdate = st.date_input("📅 Date", datetime.today(), key="fat_date")
-    fat_vals = [st.slider(f"Body Fat % {i+1}", 5.0, 50.0, 20.0, key=f"fat_{i}") for i in range(st.session_state.fat_entries)]
+# ========== BODY FAT ==========
+st.markdown("<h2 style='text-align: center;'>📉 Body Fat (%)</h2>", unsafe_allow_html=True)
+fdate = st.date_input("📅 Date", datetime.today(), key="fat_date")
+fat_vals = [st.slider(f"Body Fat % {i+1}", 5.0, 50.0, 20.0, key=f"fat_{i}") for i in range(st.session_state.fat_entries)]
+
+col1, col2 = st.columns(2)
+with col1:
     if st.button("➕ Add New Fat Entry"):
         st.session_state.fat_entries += 1
+with col2:
     if st.button("💾 Save Body Fat"):
         for i, val in enumerate(fat_vals):
             new_entry = pd.DataFrame([{"Date": f"{fdate} - Entry {i+1}", "Body Fat": val}])
             comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
         save_body_composition(comp_df)
         st.success("Body fat saved!")
-    if "Body Fat" in comp_df:
-        st.bar_chart(comp_df["Body Fat"].tail(st.session_state.fat_entries))
 
-    # ========== MUSCLE MASS ==========
-    st.markdown("<h2 style='text-align: center;'>💪 Muscle Mass (%)</h2>", unsafe_allow_html=True)
-    mdate = st.date_input("📅 Date", datetime.today(), key="muscle_date")
-    muscle_vals = [st.slider(f"Muscle Mass % {i+1}", 10.0, 60.0, 35.0, key=f"muscle_{i}") for i in range(st.session_state.muscle_entries)]
+if "Body Fat" in comp_df:
+    st.bar_chart(comp_df["Body Fat"].tail(st.session_state.fat_entries))
+
+# ========== MUSCLE MASS ==========
+st.markdown("<h2 style='text-align: center;'>💪 Muscle Mass (%)</h2>", unsafe_allow_html=True)
+mdate = st.date_input("📅 Date", datetime.today(), key="muscle_date")
+muscle_vals = [st.slider(f"Muscle Mass % {i+1}", 10.0, 60.0, 35.0, key=f"muscle_{i}") for i in range(st.session_state.muscle_entries)]
+
+col3, col4 = st.columns(2)
+with col3:
     if st.button("➕ Add New Muscle Entry"):
         st.session_state.muscle_entries += 1
+with col4:
     if st.button("💾 Save Muscle Mass"):
         for i, val in enumerate(muscle_vals):
             new_entry = pd.DataFrame([{"Date": f"{mdate} - Entry {i+1}", "Muscle Mass": val}])
             comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
         save_body_composition(comp_df)
         st.success("Muscle mass saved!")
-    if "Muscle Mass" in comp_df:
-        st.bar_chart(comp_df["Muscle Mass"].tail(st.session_state.muscle_entries))
 
-    # ========== WATER CONTENT ==========
-    st.markdown("<h2 style='text-align: center;'>💧 Water Content (%)</h2>", unsafe_allow_html=True)
-    wdate = st.date_input("📅 Date", datetime.today(), key="water_date")
-    water_vals = [st.slider(f"Water Content % {i+1}", 30.0, 70.0, 50.0, key=f"water_{i}") for i in range(st.session_state.water_entries)]
+if "Muscle Mass" in comp_df:
+    st.bar_chart(comp_df["Muscle Mass"].tail(st.session_state.muscle_entries))
+
+# ========== WATER CONTENT ==========
+st.markdown("<h2 style='text-align: center;'>💧 Water Content (%)</h2>", unsafe_allow_html=True)
+wdate = st.date_input("📅 Date", datetime.today(), key="water_date")
+water_vals = [st.slider(f"Water Content % {i+1}", 30.0, 70.0, 50.0, key=f"water_{i}") for i in range(st.session_state.water_entries)]
+
+col5, col6 = st.columns(2)
+with col5:
     if st.button("➕ Add New Water Entry"):
         st.session_state.water_entries += 1
+with col6:
     if st.button("💾 Save Water Content"):
         for i, val in enumerate(water_vals):
             new_entry = pd.DataFrame([{"Date": f"{wdate} - Entry {i+1}", "Water Content": val}])
             comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
         save_body_composition(comp_df)
         st.success("Water content saved!")
-    if "Water Content" in comp_df:
-        st.bar_chart(comp_df["Water Content"].tail(st.session_state.water_entries))
 
+if "Water Content" in comp_df:
+    st.bar_chart(comp_df["Water Content"].tail(st.session_state.water_entries))
 
-# ========== PIE CHART WITH 'OTHER' ==========
+# ========== PIE CHART WITH "OTHER" ==========
 latest_fat = comp_df["Body Fat"].dropna().iloc[-1] if "Body Fat" in comp_df and not comp_df["Body Fat"].dropna().empty else None
 latest_muscle = comp_df["Muscle Mass"].dropna().iloc[-1] if "Muscle Mass" in comp_df and not comp_df["Muscle Mass"].dropna().empty else None
 latest_water = comp_df["Water Content"].dropna().iloc[-1] if "Water Content" in comp_df and not comp_df["Water Content"].dropna().empty else None
 
-if all(v is not None for v in [latest_fat, latest_muscle, latest_water]):
+if all(val is not None for val in [latest_fat, latest_muscle, latest_water]):
     other = max(0, 100 - (latest_fat + latest_muscle + latest_water))
     values = [latest_fat, latest_muscle, latest_water, other]
     labels = ['Body Fat', 'Muscle Mass', 'Water Content', 'Other']
 
     st.markdown("""
         <h2 style='text-align: center;'>🧬 Your Full Body Composition</h2>
-        <p style='text-align: center;'>Here you can see your saved data.</p>
+        <p style='text-align: center;'>Here you can see your latest tracked body composition including 'Other' as balance.</p>
     """, unsafe_allow_html=True)
 
-    import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
     ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90)
     ax.axis("equal")
     st.pyplot(fig)
 else:
-    st.info("Please ensure you've logged all data (fat, muscle, water) to see your full body composition pie chart.")
+    st.info("Please ensure you've logged values for fat, muscle, and water to see your full composition.")
