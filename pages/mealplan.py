@@ -30,7 +30,7 @@ goal = user_prefs.get("goal", "None")   # this loads the goal preference from th
 with open("styles.css") as f:       # this loads the CSS file that contains the styles for the app 
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-API_KEY_VALE = os.getenv("API_KEY_VALE")  # This grabs the spoonacular key from the .env file
+API_KEY_SPOONACULAR = os.getenv("API_KEY_SPOONACULAR")  # This grabs the spoonacular key from the .env file
 
 test_mode = st.sidebar.checkbox("⚙️ Use Test Mode (Load Local JSON Data)", value=True)
 
@@ -67,7 +67,7 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this func
 
     goal_calories = calorie_ranges.get(goal, "calories=2000")  # Default to 2000 kcal, so if the user selects "None", the goal_calories is automatically set to 2000 kcal 
 
-    url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=popularity&number=5&apiKey={API_KEY_VALE}"
+    url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=popularity&number=5&apiKey={API_KEY_SPOONACULAR}"
 
     response = requests.get(url)        # this sends a GET request to the Spoonacular API, based on the url created above (and with the details of the user's preferences)
     if response.status_code == 200:
@@ -98,7 +98,7 @@ def get_recipe_details(recipe_id, test_mode=False):      # this function fetches
             return json.load(f)
         
     # this is the API call that fetches the details of a specific recipe based on its ID    
-    url = f"https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=true&apiKey={API_KEY_VALE}" 
+    url = f"https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=true&apiKey={API_KEY_SPOONACULAR}" 
     response = requests.get(url)
     if response.status_code == 200:      # this checks if the request was successful
         return response.json()           # here the function returns the details of the recipe
@@ -162,7 +162,7 @@ def display_recipe_details(details):
     
 
 def get_wine_pairing_for_food(food_name):   # this function fetches wine pairing suggestions for a specific food item
-    url = f"https://api.spoonacular.com/food/wine/pairing?food={food_name}&apiKey={API_KEY_VALE}"
+    url = f"https://api.spoonacular.com/food/wine/pairing?food={food_name}&apiKey={API_KEY_SPOONACULAR}"  # this is the API call that fetches the wine pairing suggestions for a specific food item
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -331,13 +331,7 @@ if recipes:             # this checks if there are any recipes in the list
             st.warning("All recipes were filtered out. Try adjusting your filters or checking nutrition info.")
             
 else:
-    if not recipes:
-        if goal == "just eat Healthier :)":
-            st.warning("No recipes found with a health score of 80 or more. Try adjusting your preferences.")
-        elif goal.lower() == "build muscle":
-            st.warning("No recipes found that meet your muscle-building criteria. Consider changing your filters.")
-        else:
-            st.warning("No recipes found. Please try different preferences or check your internet connection.")
+    pass
 
 # this is the part that displays the recipes that have been added to the calendar
 if "calendar_recipes" in st.session_state and st.session_state["calendar_recipes"]:
