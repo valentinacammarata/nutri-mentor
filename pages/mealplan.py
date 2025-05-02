@@ -70,9 +70,24 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this func
 
     response = requests.get(url)        # this sends a GET request to the Spoonacular API, based on the url created above (and with the details of the user's preferences)
     if response.status_code == 200:
-        return response.json().get("results", [])  # if the code is 200, it means the request was successful and we return the results
+        return response.json().get("results", [])  # Request successful, return the results
+    elif response.status_code == 401:
+        st.error("Unauthorized access. Please check your API key.")
+        return []
+    elif response.status_code == 403:
+        st.error("Access forbidden. Your API key might have been restricted.")
+        return []
+    elif response.status_code == 404:
+        st.error("Resource not found. Please check the API endpoint.")
+        return []
+    elif response.status_code == 429:
+        st.error("Rate limit exceeded. Please wait and try again later.")
+        return []
+    elif response.status_code >= 500:
+        st.error("Server error. The API service might be down. Try again later.")
+        return []
     else:
-        st.error("Failed to fetch recipes. You have probably reached the limit of your API key, try again tomorrow.")
+        st.error(f"Unexpected error occurred. Status code: {response.status_code}")
         return []
 
 @st.cache_data # this caches the data so that it doesn't have to be fetched again if the user goes back to the page
@@ -315,7 +330,13 @@ if recipes:             # this checks if there are any recipes in the list
             st.warning("All recipes were filtered out. Try adjusting your filters or checking nutrition info.")
             
 else:
-    st.empty ()  # this shows an empty space if there are no recipes in the list
+    if not recipes:
+        if goal == "just eat Healthier :)":
+            st.warning("No recipes found with a health score of 80 or more. Try adjusting your preferences.")
+        elif goal.lower() == "build muscle":
+            st.warning("No recipes found that meet your muscle-building criteria. Consider changing your filters.")
+        else:
+            st.warning("No recipes found. Please try different preferences or check your internet connection.")
 
 # this is the part that displays the recipes that have been added to the calendar
 if "calendar_recipes" in st.session_state and st.session_state["calendar_recipes"]:
