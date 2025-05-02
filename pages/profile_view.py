@@ -195,13 +195,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Zwei Spalten
-col1, col2 = st.columns(2)
+# Drei Spalten
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("<div class='dashboard-block'>", unsafe_allow_html=True)
     if st.button("📊 Data View", key="data_view"):
-        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
         st.switch_page("pages/app.py")
     st.markdown("<div class='dashboard-desc'>Track your weight data and monitor your progress visually.</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
@@ -209,7 +208,13 @@ with col1:
 with col2:
     st.markdown("<div class='dashboard-block'>", unsafe_allow_html=True)
     if st.button("🥗 Meal Plan", key="meal_plan"):
-        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
         st.switch_page("pages/mealplan.py")
     st.markdown("<div class='dashboard-desc'>Explore our most exciting tool: intelligent recipe search based on your profile!</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div class='dashboard-block'>", unsafe_allow_html=True)
+    if st.button("🔥 Calorie Tracker", key="calo_tracker"):
+        st.switch_page("pages/calo.py")
+    st.markdown("<div class='dashboard-desc'>Use the calorie tracker to manage your nutritional intake precisely.</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)

@@ -21,7 +21,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 if st.button("Go Back to Calorie Tracker", key="go_back_button"):
-    st.switch_page("Calo.py")
+    st.switch_page("pages/calo.py")
 
 # -------------------- LINE SEPARATOR --------------------
 st.markdown("""
