@@ -47,6 +47,7 @@ st.markdown(f'<div class="description">Welcome, {user_name}! Discover delicious 
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this adds a line separator
 
 # This writes down the user preferences according to the input from the login page (the JSON file)
+st.markdown(f"<div class='subtitle'>Here are your Preferences</div>", unsafe_allow_html=True) 
 st.markdown(f"<p style='font-size: 20px; margin-left: 50px;'><b>🎯 Goal:</b> {goal}</p>", unsafe_allow_html=True)
 st.markdown(f"<p style='font-size: 20px; margin-left: 50px;'><b>🥗 Diet:</b> {diet}</p>", unsafe_allow_html=True)
 

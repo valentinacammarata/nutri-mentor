@@ -327,7 +327,8 @@ st.markdown("""
 # Filter recipes for the current month and year
 filtered_recipes = {
     date_key: recipe for date_key, recipe in st.session_state.recipes.items()
-    if int(date_key.split('-')[1]) == st.session_state.calendar_month and int(date_key.split('-')[0]) == st.session_state.calendar_year
+    if len(date_key.split('-')) == 3 and date_key.split('-')[1].isdigit() and date_key.split('-')[0].isdigit()
+    and int(date_key.split('-')[1]) == st.session_state.calendar_month and int(date_key.split('-')[0]) == st.session_state.calendar_year
 }
 
 if filtered_recipes:
