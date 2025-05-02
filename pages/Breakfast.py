@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
 from datetime import date
-from streamlit_extras.switch_page_button import switch_page  
+from streamlit_extras.switch_page_button import switch_page 
+import os 
 
 # -------------------- CSS STYLES --------------------
 with open("styles.css") as f:
@@ -106,7 +107,7 @@ if "saved_meals" not in st.session_state:
     st.session_state.saved_meals = []
 
 # USDA API Key
-API_KEY = "aL8QBhKyNY5zMFjZioZY0yQCk8GgtHjtaBjbsMfH"
+API_KEY = os.getenv("API_KEY_BORG")
 
 # Function to fetch nutritional data
 def fetch_food_data(query):
