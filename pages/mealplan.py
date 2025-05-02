@@ -8,7 +8,7 @@ import json
 
 load_dotenv()  # This loads everything from the .env file
 
-def load_user_preferences():
+def load_user_preferences():    # this function loads the user preferences from the JSON file (from the login page)
     try:
         with open('profile_data.json', 'r') as f:
             data = json.load(f)
@@ -24,8 +24,8 @@ def load_user_preferences():
 
 user_prefs = load_user_preferences()   
 
-diet = user_prefs.get("diet", "None")
-goal = user_prefs.get("goal", "None")
+diet = user_prefs.get("diet", "None")   # this loads the diet preference from the JSON file
+goal = user_prefs.get("goal", "None")   # this loads the goal preference from the JSON file 
 
 with open("styles.css") as f:       # this loads the CSS file that contains the styles for the app 
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -36,30 +36,37 @@ test_mode = st.sidebar.checkbox("⚙️ Use Test Mode (Load Local JSON Data)", v
 
 # This sets the title, description and separator according to the styles defined in the CSS file
 st.markdown('<p class="title">Discover Recipes Based on Your Preferences</p>', unsafe_allow_html=True) # this is the title of the app: displays the title with custom CSS applied (through the class="title") and defined in the CSS file -> <p> is a paragraph tag and is used for inline text elements
-st.markdown('<div class="description">Welcome! Discover delicious recipes tailored to your dietary goals, preferences, and cuisine choices. Get cooking today!</p>', unsafe_allow_html=True)
-st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this add a line separator
+try:        # this loads the user's name from the JSON file (from the login page) so that it can be displayed in the welcome message
+    with open('profile_data.json', 'r') as f:
+        profile_data = json.load(f)
+        user_name = profile_data.get("name", "Guest")  # Load the user's name from the JSON file, default to "Guest" if not found
+except FileNotFoundError:
+    user_name = "Guest"
 
-# Mostra le preferenze salvate dell'utente
-st.markdown('<p class="subtitle">Here are your preferences:</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="description">Welcome, {user_name}! Discover delicious recipes tailored to your dietary goals, preferences, and cuisine choices. Get cooking today!</p>', unsafe_allow_html=True)
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this adds a line separator
+
+# This writes down the user preferences according to the input from the login page (the JSON file)
 st.markdown(f"<p style='font-size: 20px; margin-left: 50px;'><b>🎯 Goal:</b> {goal}</p>", unsafe_allow_html=True)
 st.markdown(f"<p style='font-size: 20px; margin-left: 50px;'><b>🥗 Diet:</b> {diet}</p>", unsafe_allow_html=True)
 
+@st.cache_data # this caches the data so that it doesn't have to be fetched again if the user goes back to the page
 def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this function fetches recipes based on the user's dietary preference and goal
-    if test_mode:       # this is a test mode that uses a local JSON file instead of the API, for when I reached the limit of the API key
+    if test_mode:       # this is a test mode that uses a local JSON file with fictious recipes instead of the API, for when I reach the limit of the API key
         with open('sample_recipes.json', 'r') as f:
             data = json.load(f)
         return data.get("results", [])
     
     calorie_ranges = {                              # this is a dictionary that contains the filters for each goal
-        "Eat Healthier": "minHealthScore=80",       # for eat healthier, we take the health score given by the API
+        "just eat Healthier :)": "minHealthScore=80",       # for eat healthier, we take the health score given by the API
         "Lose Weight": "maxCalories=500",
-        "Gain Weight": "minCalories=800",
+        "Build Muscle": "minCalories=600&maxCalories=1000",
         "None": "minCalories=0&maxCalories=10000"
     }
 
     goal_calories = calorie_ranges.get(goal, "calories=2000")  # Default to 2000 kcal, so if the user selects "None", the goal_calories is automatically set to 2000 kcal 
 
-    url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&number=5&apiKey={API_KEY_VALE}" # this url fetches recipes from the Spoonacular website based on the user's dietary preference, cuisine and goal
+    url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=popularity&number=5&apiKey={API_KEY_VALE}"
 
     response = requests.get(url)        # this sends a GET request to the Spoonacular API, based on the url created above (and with the details of the user's preferences)
     if response.status_code == 200:
@@ -68,23 +75,24 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this func
         st.error("Failed to fetch recipes. You have probably reached the limit of your API key, try again tomorrow.")
         return []
 
+@st.cache_data # this caches the data so that it doesn't have to be fetched again if the user goes back to the page
 def get_recipe_details(recipe_id, test_mode=False):      # this function fetches the details of a specific recipe based on its ID
     if test_mode:   # this is a test mode that uses a local JSON file instead of the API, for when I reached the limit of the API key
         with open('sample_recipe_details.json', 'r') as f:
             return json.load(f)
         
-    # this is the real API call that fetches the details of a specific recipe based on its ID    
-    url = f"https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=true&apiKey={API_KEY_VALE}" # this url fetches the details of a specific recipe based on its ID
+    # this is the API call that fetches the details of a specific recipe based on its ID    
+    url = f"https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=true&apiKey={API_KEY_VALE}" 
     response = requests.get(url)
-    if response.status_code == 200:
+    if response.status_code == 200:      # this checks if the request was successful
         return response.json()           # here the function returns the details of the recipe
     else:
         st.error("Failed to fetch recipe details.")
         return {}
 
 def display_recipe_details(details):
-    # Lista delle informazioni dietetiche del piatto
-    diet_flags = {
+
+    diet_flags = {                                      # this is a dictionary that contains the diet flags for the recipe
         "Vegetarian": details.get("vegetarian"),
         "Vegan": details.get("vegan"),
         "Gluten-Free": details.get("glutenFree"),
@@ -97,32 +105,31 @@ def display_recipe_details(details):
     
     active_diets = [key for key, value in diet_flags.items() if value]  # Get the active diet tags
 
-    # Visualizza gli attributi della ricetta
-    attributes = [
+    attributes = [                      # this is the first list of attributes that will be displayed for each recipe   
         ("Ready in", f"{details['readyInMinutes']} min"),
         ("Servings", details['servings']),
         ("Health Score", f"{int(details['healthScore'])} / 100"),
         ("Diet Tags", ', '.join(active_diets) if active_diets else 'None')
     ]
     
-    for label, value in attributes:  # Display attributes
+    for label, value in attributes:  # Display attributes with a certain style
         st.markdown(f"<p style='margin: 0;'><b>{label}:</b> {value}</p>", unsafe_allow_html=True)
 
-    if "nutrition" in details and details["nutrition"].get("nutrients"):
-        nutrients = details["nutrition"]["nutrients"]
-        calories = next((n for n in nutrients if n["name"] == "Calories"), {}).get("amount")
-        carbs = next((n for n in nutrients if n["name"] == "Carbohydrates"), {}).get("amount")
-        fat = next((n for n in nutrients if n["name"] == "Fat"), {}).get("amount")
-        protein = next((n for n in nutrients if n["name"] == "Protein"), {}).get("amount")
+    if "nutrition" in details and details["nutrition"].get("nutrients"):        # this checks if the recipe has nutrition information
+        nutrients = details.get("nutrition", {}).get("nutrients", [])  
+        calories = next((n for n in nutrients if n["name"] == "Calories"), {}).get("amount")    # this gets the calories from the nutrition information
+        carbs = next((n for n in nutrients if n["name"] == "Carbohydrates"), {}).get("amount")  # this gets the carbohydrates from the nutrition information
+        fat = next((n for n in nutrients if n["name"] == "Fat"), {}).get("amount")              # this gets the fat from the nutrition information
+        protein = next((n for n in nutrients if n["name"] == "Protein"), {}).get("amount")      # this gets the protein from the nutrition information
 
-        with st.container():
+        with st.container():    # this creates a container for the nutrition information
             st.markdown("<br>", unsafe_allow_html=True)  # br means break, this adds a line break
             st.markdown(
                 """
                 ### Nutrition Information
                 """, unsafe_allow_html=True)
 
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns(2)  # this creates two columns for the nutrition information
 
             with col1:
                 st.markdown(f"<p style='margin: 5px 0;'><b>Calories:</b> {calories} kcal</p>", unsafe_allow_html=True)
@@ -138,7 +145,7 @@ def display_recipe_details(details):
         st.info("ℹ️  No nutrition information available for this recipe.")
     
 
-def get_wine_pairing_for_food(food_name):
+def get_wine_pairing_for_food(food_name):   # this function fetches wine pairing suggestions for a specific food item
     url = f"https://api.spoonacular.com/food/wine/pairing?food={food_name}&apiKey={API_KEY_VALE}"
     response = requests.get(url)
     if response.status_code == 200:
@@ -149,9 +156,9 @@ def get_wine_pairing_for_food(food_name):
 recipes = [] # this is an empty list that will be used to store the recipes fetched from the API
 
 st.markdown("<br>", unsafe_allow_html=True)  # Add spacing before the checkbox
-st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this add a line separator
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this adds a line separator
 
-st.markdown('<p class="subtitle">Customize Your Recipe Search!</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Customize Your Recipe Search!</p>', unsafe_allow_html=True)    # here the user can customize the recipe search
 cuisine = st.selectbox("🥙 Choose a cuisine:", ["Any", "American", "Italian", "Mexican", "Mediterranean", "French", "Indian", "Asian"])
 dish_type = st.selectbox("🥘 Choose a dish type:", ["Any", "Appetizer", "Side Dish", "Lunch", "Dinner", "Snack", "Dessert"])
 
@@ -163,10 +170,10 @@ st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this add 
 st.markdown('<p class="subtitle">All set! Just press the button to get your recipes!</p>', unsafe_allow_html=True)
 if st.button("🧑🏼‍🍳 Serve the Recipes!"):                                # this button fetches the recipes based on the user's preferences
     diet = "" if diet == "None" else diet.lower()
-    cuisine = "" if cuisine == "Any" else cuisine.lower()
+    cuisine = "" if cuisine == "Any" else cuisine.lower()   # this checks if the user selected "Any" for the cuisine, if so, it sets the cuisine to an empty string
 
-    dish_type_map = {
-        "Appetizer": "appetizer",
+    dish_type_map = {               # this is a dictionary that maps the dish type to the API format, as the API uses a different format
+        "Appetizer": "appetizer",   
         "Side Dish": "side dish",
         "Lunch": "main course",
         "Dinner": "main course",
@@ -180,37 +187,57 @@ if st.button("🧑🏼‍🍳 Serve the Recipes!"):                             
     with st.spinner("Cooking up some recipes... 🍽️"):           # this shows a loading spinner while recipies are fetched
         time.sleep(2)  # Simulate a delay for the spinner effect
         recipes = get_recipes(diet, goal, cuisine, dish_type, test_mode=test_mode)
+
+if recipes:         # this checks if there are any recipes in the list
     
-    st.session_state["recipes"] = recipes     
+    st.session_state["recipes"] = recipes     # this stores the recipes in the session state, so they can be accessed later
     
 else:
     recipes = st.session_state.get("recipes", [])
 
-if recipes:                                                 # this checks if there are any recipes in the list
+if recipes:             # this checks if there are any recipes in the list
     st.subheader("Here are some recipes based on your preferences:")
     
-    if goal.lower() == "eat healthier":
+    if goal == "just eat Healthier :)":     # if the user selected "eat healthier", we filter the recipes based on the health score
         recipes = [r for r in recipes if r.get("healthScore", 0) >= 80]
+
     if not recipes:
-        st.warning("No healthy recipes found with a health score of 80 or more.")
+        if goal == "just eat Healthier :)":     
+            st.warning("No healthy recipes found with a health score of 80 or more.")
+        elif goal.lower() == "build muscle":
+            st.warning("No recipes found that meet your muscle-building criteria.")
+        else:
+            st.warning("No recipes found.")
+    
     else:
+        shown = 0
         for recipe in recipes:          # this loops through the recipes and displays them
             details = get_recipe_details(recipe["id"], test_mode=test_mode)  # this calls the get_recipe_details function and stores the results in the details variable
             
-            if goal.lower() == "eat healthier" and details.get("healthScore", 0) < 80:
+            if goal == "just eat Healthier :)" and details.get("healthScore", 0) < 80:  # this checks if the recipe has a health score of 80 or more, if not, it skips the recipe
                 continue
+            
+            if goal.lower() == "build muscle":
+                protein_raw = next((n for n in details.get("nutrition", {}).get("nutrients", []) if n["name"] == "Protein"), {}).get("amount", 0)
+
+                try:
+                    protein = float(protein_raw)
+                except (ValueError, TypeError):
+                    protein = 0
+
+                if protein < 5:
+                    continue
 
             with st.container():    
-                st.markdown('<div class="recipe-card">', unsafe_allow_html=True)    # this creates a card for each recipe (for the styling)
+                st.markdown('<div class="recipe-card">', unsafe_allow_html=True)    # this creates a card for each recipe
                                             
-                col1, col2 = st.columns([1, 3])                 # Show title and image upfront
+                col1, col2 = st.columns([1, 3])                 # Show title and image upfront, one column for image, one for title
                 with col1:
                     st.image(recipe["image"], width=150)
                 with col2:
                     st.markdown(f"### {recipe['title']}")
-
+                
                 with st.expander("See the ingredients and instructions for this recipe"):   # this creates an expander that shows the ingredients and instructions for the recipe
-                      # Skip this recipe if it's not healthy enough
                     
                     if not details:         # Check if the details are empty (or None)
                         st.error("Could not fetch recipe details for this recipe.")
@@ -219,11 +246,11 @@ if recipes:                                                 # this checks if the
                     display_recipe_details(details)     # this calls the function that displays the details of the recipe (defined earlier)
 
                     st.markdown("### Ingredients")      # this shows the ingredients for the recipe
-                    ingredients = [f"- {ing['original']}" for ing in details.get("extendedIngredients", [])]
-                    st.write("\n".join(ingredients))
+                    ingredients = [f"- {ing['original']}" for ing in details.get("extendedIngredients", [])]    # this gets the ingredients from the recipe details
+                    st.write("\n".join(ingredients))    # this displays the ingredients in a list format
 
                     st.markdown("### Instructions")     # this shows the instructions for the recipe
-                    instructions = details.get("analyzedInstructions", [])
+                    instructions = details.get("analyzedInstructions", [])  # this gets the instructions from the recipe details
                     if instructions:
                         steps = [f"{step['number']}. {step['step']}" for step in instructions[0].get("steps", [])]
                         st.write("\n".join(steps))
@@ -239,13 +266,13 @@ if recipes:                                                 # this checks if the
                                 main_food = dish_types[0]
                             else:
                             # Step 2: Try to use a more meaningful part of the title 
-                                words = recipe.get("title", "").lower().split()
+                                words = recipe.get("title", "").lower().split()     # this splits the title into words and converts it to lowercase
                                 keywords = ["chicken", "beef", "salmon", "pasta", "cheese", "steak", "shrimp", "lamb", "pork", "vegetable", "salad", "soup", "pizza", "taco", "burger", "tuna", "mushroom"]
-                                main_food = next((word for word in words if word in keywords), "food")  # fallback to "food"
+                                main_food = next((word for word in words if word in keywords), "food")  # this checks if any of the words in the title are in the keywords list, if so, it sets the main_food to that word, otherwise it sets it to "food"
 
-                            wine_data = get_wine_pairing_for_food(main_food.lower())
-                            wines = wine_data.get("pairedWines", [])
-                            note = wine_data.get("pairingText", "") 
+                            wine_data = get_wine_pairing_for_food(main_food.lower())    # this calls the function that fetches the wine pairing suggestions for the food item
+                            wines = wine_data.get("pairedWines", [])    # this gets the paired wines from the wine data
+                            note = wine_data.get("pairingText", "")     # this gets the pairing text from the wine data
 
                             if wines:
                                 st.markdown(
@@ -257,7 +284,7 @@ if recipes:                                                 # this checks if the
                             else:
                                 st.markdown("<p style='margin: 0;'><b>Wine Pairing:</b> Not available</p>", unsafe_allow_html=True)
 
-                # Wrap Date + Save button in a form:
+                # this creates a button that allows the user to add the recipe to their calendar 
                 with st.form(f"calendar_form_{recipe['id']}"):
                     selected_date = st.date_input(
                         f"📅 Would you like to add this meal to your calendar?",
@@ -266,13 +293,13 @@ if recipes:                                                 # this checks if the
                     submitted = st.form_submit_button(f"Save {recipe['title']} to Calendar")
 
                     if submitted:
-                        if "calendar_recipes" not in st.session_state:
+                        if "calendar_recipes" not in st.session_state:  # this checks if the calendar_recipes key is in the session state, if not, it creates it
                             st.session_state["calendar_recipes"] = []
-                        st.session_state["calendar_recipes"].append({
+                        st.session_state["calendar_recipes"].append({   # this appends the recipe to the calendar_recipes list in the session state
                             "recipe_id": recipe["id"],
                             "recipe_title": recipe["title"],
                             "selected_date": selected_date,
-                            "nutrition_info": {
+                            "nutrition_info": {                         # this stores the nutrition information for the recipe (used then for the calories page)
                                 "calories": details.get("nutrition", {}).get("nutrients", [{}])[0].get("amount"),
                                 "carbs": next((n for n in details.get("nutrition", {}).get("nutrients", []) if n["name"] == "Carbohydrates"), {}).get("amount"),
                                 "fat": next((n for n in details.get("nutrition", {}).get("nutrients", []) if n["name"] == "Fat"), {}).get("amount"),
@@ -280,36 +307,40 @@ if recipes:                                                 # this checks if the
                             }
                         })
                         st.success(f"Recipe {recipe['title']} added to your calendar for {selected_date}")   
-                
+
                 st.markdown('</div>', unsafe_allow_html=True)    # this closes the recipe card div (for the styling) 
-                   
+            shown += 1
+
+        if shown == 0:
+            st.warning("All recipes were filtered out. Try adjusting your filters or checking nutrition info.")
+            
 else:
     st.empty ()  # this shows an empty space if there are no recipes in the list
 
+# this is the part that displays the recipes that have been added to the calendar
 if "calendar_recipes" in st.session_state and st.session_state["calendar_recipes"]:
     st.subheader("Your Selected Recipes")
     
-    # Visualizza le ricette programmate
+    # visualize the recipes in the calendar
     for entry in st.session_state["calendar_recipes"]:
         st.write(f"{entry['recipe_title']} on {entry['selected_date']}")
 else:
     pass
 
-# Salvataggio nel file JSON
+# this part saves the recipes to a JSON file
 def save_to_file():
     if "calendar_recipes" in st.session_state:
-        # Convert dates to string before saving
         data_to_save = []
         for entry in st.session_state["calendar_recipes"]:
-            entry_copy = entry.copy()
+            entry_copy = entry.copy()   # entry.copy() creates a shallow copy of the entry dictionary
             if isinstance(entry_copy["selected_date"], datetime.date):
                 entry_copy["selected_date"] = entry_copy["selected_date"].isoformat()  # Convert date to string
             data_to_save.append(entry_copy)
 
-        with open('calendar_recipes.json', 'w') as f:
-            json.dump(data_to_save, f)
+        with open('calendar_recipes.json', 'w') as f:   # this opens the file in write mode
+            json.dump(data_to_save, f)      # this saves the recipes to a JSON file
 
-# Caricamento dal file JSON
+# this part loads the recipes from the JSON file
 def load_from_file():
     try:
         with open('calendar_recipes.json', 'r') as f:
@@ -318,39 +349,36 @@ def load_from_file():
                 return []
             return json.loads(content)
     except (FileNotFoundError, json.JSONDecodeError):
-        # Fix: create an empty JSON file
         with open('calendar_recipes.json', 'w') as f:
             json.dump([], f)
-        return []  # Se il file non esiste, restituisce una lista vuotas
+        return []  # if the file is empty or not found, return an empty list
 
-def reset_calendar():
-    # Clear the calendar_recipes.json file
+def reset_calendar():       # this function resets the calendar by clearing the JSON file and the session state, if the button is pressed
     with open('calendar_recipes.json', 'w') as f:
-        json.dump([], f)
+        json.dump([], f) 
 
-    # Also reset the session state in the app
-    st.session_state["calendar_recipes"] = []
+    st.session_state["calendar_recipes"] = []   # this clears the session state
 
     st.success("✅ Calendar has been reset successfully!")
 
-# Aggiungi un separatore e un titolo
+# add a separator and a title 
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Press the button below to save these recipes to your calendar!</p>', unsafe_allow_html=True)
 
-# Pulsante per salvare le ricette nel file JSON
+# this button saves the recipes to a JSON file
 if st.button("✅ Save my Recipes!"):
     save_to_file()
 
-# Pulsante per cancellare le ricette dal file JSON
+# this button resets the calendar by clearing the JSON file and the session state
 if st.button("🗑️ Reset Calendar"):
     reset_calendar()
 
-# Carica le ricette dal file JSON quando l'app si avvia
+# this part loads the recipes from the JSON file and displays them (so that we can see the recipes that have been saved)
 calendar_recipes = load_from_file()
 
-# Visualizza le ricette caricate dal file
+# this part displays the recipes that have been loaded from the JSON file
 if calendar_recipes:
     st.subheader("Recipes loaded from the file:")
     for recipe in calendar_recipes:
-        st.markdown(f"### {recipe['recipe_title']} on {recipe['selected_date']}")
+        st.markdown(f"{recipe['recipe_title']} on {recipe['selected_date']}")
 
