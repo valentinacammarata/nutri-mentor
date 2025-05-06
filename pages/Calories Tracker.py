@@ -122,6 +122,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+
 # -------------------- LINE SEPARATOR --------------------
 # Add a horizontal line separator
 st.markdown("""
@@ -150,7 +151,7 @@ st.markdown(f"""
     <div class='subtitle'><em>{today}</em></div>
 """, unsafe_allow_html=True)
 
-# Display total nutritional information in a modern card layout
+# Display total nutritional information in a  card layout
 if "totals" not in st.session_state:
     st.session_state.totals = {
         "calories": 0.0,
@@ -367,24 +368,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -------------------- SWITCH PAGE BUTTONS --------------------
-# Add buttons to switch to other pages
+# Titolo e descrizione centrati
 st.markdown("""
     <div style="text-align: center; color: green;">
-        <h2 class="subtitle" style="color: green;">🍽️ Manual Food Entry</h2>
-        <p class="description" style="color: green;">
+        <h2 class="subtitle">🍽️ Manual Food Entry</h2>
+        <p class="description">
             Add and manage your food entries for each day. Keep track of your meals and nutritional intake manually.
         </p>
     </div>
 """, unsafe_allow_html=True)
 
-if st.button("☕ Go to Breakfast"):
-    st.switch_page("pages/Breakfast.py")
+# Layout a 4 colonne per i bottoni
+col1, col2, col3, col4 = st.columns(4)
 
-if st.button("🥗 Go to Lunch"):
-    st.switch_page("pages/Lunch.py")
+with col1:
+    if st.button("☕ Breakfast"):
+        st.switch_page("pages/Breakfast.py")
 
-if st.button("🍝 Go to Dinner"):
-    st.switch_page("pages/Dinner.py")
+with col2:
+    if st.button("🥗 Lunch"):
+        st.switch_page("pages/Lunch.py")
 
-if st.button("🍫 Go to Snack"):
-    st.switch_page("pages/Snack.py")
+with col3:
+    if st.button("🍝 Dinner"):
+        st.switch_page("pages/Dinner.py")
+
+with col4:
+    if st.button("🍫 Snack"):
+        st.switch_page("pages/Snack.py")

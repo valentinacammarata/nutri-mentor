@@ -215,6 +215,6 @@ with col2:
 with col3:
     st.markdown("<div class='dashboard-block'>", unsafe_allow_html=True)
     if st.button("🔥 Calorie Tracker", key="calo_tracker"):
-        st.switch_page("pages/calo.py")
+        st.switch_page("pages/Calories Tracker.py")
     st.markdown("<div class='dashboard-desc'>Use the calorie tracker to manage your nutritional intake precisely.</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
