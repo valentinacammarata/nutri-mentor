@@ -122,6 +122,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+
 # -------------------- LINE SEPARATOR --------------------
 # Add a horizontal line separator
 st.markdown("""
@@ -150,7 +151,7 @@ st.markdown(f"""
     <div class='subtitle'><em>{today}</em></div>
 """, unsafe_allow_html=True)
 
-# Display total nutritional information in a modern card layout
+# Display total nutritional information in a  card layout
 if "totals" not in st.session_state:
     st.session_state.totals = {
         "calories": 0.0,
@@ -283,39 +284,27 @@ for week in month_days:
 if "selected_day" in st.session_state:
     selected_day = st.session_state.selected_day
     selected_date_key = f"{st.session_state.calendar_year}-{st.session_state.calendar_month}-{selected_day}"
-    
+
     st.markdown(f"### Selected Day: {selected_day} {calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}")
-    
-    recipe_text = st.session_state.recipes.get(selected_date_key, "")
+
+    # Selettore del tipo di pasto
+    meal_type = st.selectbox("Select meal type:", ["Breakfast", "Lunch", "Dinner", "Snack"])
+
+    # Inizializza la struttura se non esiste
+    if selected_date_key not in st.session_state.recipes:
+        st.session_state.recipes[selected_date_key] = {}
+
+    # Recupera ricetta esistente per il pasto selezionato
+    recipe_text = st.session_state.recipes[selected_date_key].get(meal_type, "")
     recipe = st.text_area("Insert your recipe here:", recipe_text)
-    
+
     if st.button("✅ Save Recipe", key="save_recipe"):
-        st.session_state.recipes[selected_date_key] = recipe
-        st.success(f"Recipe saved for {selected_day} {calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}!")
+        st.session_state.recipes[selected_date_key][meal_type] = recipe
+        st.success(f"{meal_type} saved for {selected_day} {calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}!")
 
-# -------------------- LINE SEPARATOR --------------------
-# Add another horizontal line separator
-st.markdown("""
-    <style>
-        .separator-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .separator {
-            border: none;
-            border-top: 2px solid #3E8E41;
-            width: 50%;
-        }
-    </style>
-    <div class="separator-container">
-        <hr class='separator'>
-    </div>
-""", unsafe_allow_html=True)
-
-# -------------------- SAVED RECIPES --------------------
-# Display the saved recipes section
-st.markdown("""
+    if selected_date_key in st.session_state.recipes:
+        # Display the saved recipes section
+        st.markdown("""
     <div style="text-align: center; color: green;">
         <h2 class="subtitle" style="color: green;">🍽️ Saved Meals</h2>
         <p class="description" style="color: green;">
@@ -323,28 +312,51 @@ st.markdown("""
         </p>
     </div>
 """, unsafe_allow_html=True)
-
-# Filter recipes for the current month and year
-filtered_recipes = {
-    date_key: recipe for date_key, recipe in st.session_state.recipes.items()
-    if int(date_key.split('-')[1]) == st.session_state.calendar_month and int(date_key.split('-')[0]) == st.session_state.calendar_year
-}
-
-if filtered_recipes:
-    # Create a dropdown menu with days that have saved recipes
-    selected_date = st.selectbox(
-        "Select a day to view the saved recipe:",
-        options=sorted(filtered_recipes.keys()),
-        format_func=lambda x: f"Day {x.split('-')[2]} {calendar.month_name[int(x.split('-')[1])]} {x.split('-')[0]}"
-    )
+        
     
-    # Display the selected recipe
-    if selected_date:
-        st.markdown(f"### Recipe for {selected_date.split('-')[2]} {calendar.month_name[int(selected_date.split('-')[1])]} {selected_date.split('-')[0]}")
-        st.markdown(filtered_recipes[selected_date])
-else:
-    st.markdown("No saved recipes for this month.")
 
+    meal_emojis = {
+        "Breakfast": "☕",
+        "Lunch": "🥗",
+        "Dinner": "🍝",
+        "Snack": "🍫"
+    }
+
+    for meal in ["Breakfast", "Lunch", "Dinner", "Snack"]:
+        if meal in st.session_state.recipes[selected_date_key]:
+            content = st.session_state.recipes[selected_date_key][meal]
+            st.markdown(f"**{meal_emojis[meal]} {meal}:** {content}")
+
+    filtered_recipes = {
+        date_key: recipe for date_key, recipe in st.session_state.recipes.items()
+        if len(date_key.split('-')) == 3 and date_key.split('-')[1].isdigit() and date_key.split('-')[0].isdigit()
+        and int(date_key.split('-')[1]) == st.session_state.calendar_month and int(date_key.split('-')[0]) == st.session_state.calendar_year
+    }
+
+    if filtered_recipes:
+        # Create a dropdown menu with days that have saved recipes
+        selected_date = st.selectbox(
+            "Select a day to view the saved recipe:",
+            options=sorted(filtered_recipes.keys()),
+            format_func=lambda x: f"Day {x.split('-')[2]} {calendar.month_name[int(x.split('-')[1])]} {x.split('-')[0]}"
+        )
+
+        # Display the saved recipes for the selected date
+        st.markdown(f"### Recipes for {selected_date.split('-')[2]} {calendar.month_name[int(selected_date.split('-')[1])]} {selected_date.split('-')[0]}")
+
+        meal_emojis = {
+            "Breakfast": "☕",
+            "Lunch": "🥗",
+            "Dinner": "🍝",
+            "Snack": "🍫"
+        }
+
+        for meal, content in filtered_recipes[selected_date].items():
+            st.markdown(f"**{meal_emojis.get(meal, '')} {meal}:** {content}")
+    else:
+        st.info("No recipes saved for this month.")
+
+   
 # -------------------- LINE SEPARATOR --------------------
 # Add another horizontal line separator
 st.markdown("""
@@ -366,24 +378,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -------------------- SWITCH PAGE BUTTONS --------------------
-# Add buttons to switch to other pages
+# Titolo e descrizione centrati
 st.markdown("""
     <div style="text-align: center; color: green;">
-        <h2 class="subtitle" style="color: green;">🍽️ Manual Food Entry</h2>
-        <p class="description" style="color: green;">
+        <h2 class="subtitle">🍽️ Manual Food Entry</h2>
+        <p class="description">
             Add and manage your food entries for each day. Keep track of your meals and nutritional intake manually.
         </p>
     </div>
 """, unsafe_allow_html=True)
 
-if st.button("☕ Go to Breakfast"):
-    st.switch_page("pages/Breakfast.py")
+# Layout a 4 colonne per i bottoni
+col1, col2, col3, col4 = st.columns(4)
 
-if st.button("🥗 Go to Lunch"):
-    st.switch_page("pages/Lunch.py")
+with col1:
+    if st.button("☕ Breakfast"):
+        st.switch_page("pages/Breakfast.py")
 
-if st.button("🍝 Go to Dinner"):
-    st.switch_page("pages/Dinner.py")
+with col2:
+    if st.button("🥗 Lunch"):
+        st.switch_page("pages/Lunch.py")
 
-if st.button("🍫 Go to Snack"):
-    st.switch_page("pages/Snack.py")
+with col3:
+    if st.button("🍝 Dinner"):
+        st.switch_page("pages/Dinner.py")
+
+with col4:
+    if st.button("🍫 Snack"):
+        st.switch_page("pages/Snack.py")
