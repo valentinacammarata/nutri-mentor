@@ -10,7 +10,7 @@ load_dotenv()  # This loads everything from the .env file
 
 def load_user_preferences():    # this function loads the user preferences from the JSON file (from the login page)
     try:
-        with open('profile_data.json', 'r') as f:
+        with open('ressources/profile_data.json', 'r') as f:
             data = json.load(f)
             return {
                 "goal": data.get("goals", ["None"])[0],  # Prende il primo goal dalla lista
@@ -27,7 +27,7 @@ user_prefs = load_user_preferences()
 diet = user_prefs.get("diet", "None")   # this loads the diet preference from the JSON file
 goal = user_prefs.get("goal", "None")   # this loads the goal preference from the JSON file 
 
-with open("styles.css") as f:       # this loads the CSS file that contains the styles for the app 
+with open("ressources/styles.css") as f:       # this loads the CSS file that contains the styles for the app 
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 API_KEY_SPOONACULAR = os.getenv("API_KEY_SPOONACULAR")  # This grabs the spoonacular key from the .env file
