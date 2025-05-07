@@ -53,7 +53,7 @@ with st.form("profile_form"):
         }
         
         # Speichern in eine JSON-Datei
-        with open("profile_data.json", "w") as f:
+        with open("ressources/profile_data.json", "w") as f:
             json.dump(profile_data, f)
         
         st.success(f"Thank you, {name}! Your profile has been created.")

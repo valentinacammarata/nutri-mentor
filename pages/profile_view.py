@@ -51,8 +51,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # gespeicherte Profildaten laden
-if os.path.exists("profile_data.json"):
-    with open("profile_data.json", "r") as f:
+if os.path.exists("ressources/profile_data.json"):
+    with open("ressources/profile_data.json", "r") as f:
         profile_data = json.load(f)
 else:
     st.error("No profile data found. Please create your profile first.")
@@ -96,7 +96,7 @@ with st.container():
     if st.button("Log Weight"):
         profile_data["weight"] = float(weight)
         profile_data["date"] = str(date)
-        with open("profile_data.json", "w") as f:
+        with open("ressources/profile_data.json", "w") as f:
             json.dump(profile_data, f)
         st.success(f"Weight of {weight} kg logged for {date}.")
 
@@ -207,8 +207,8 @@ with col1:
 
 with col2:
     st.markdown("<div class='dashboard-block'>", unsafe_allow_html=True)
-    if st.button("🥗 Meal Plan", key="meal_plan"):
-        st.switch_page("pages/mealplan.py")
+    if st.button("🥗 Recipes Generator", key="meal_plan"):
+        st.switch_page("pages/Recipes Generator.py")
     st.markdown("<div class='dashboard-desc'>Explore our most exciting tool: intelligent recipe search based on your profile!</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
