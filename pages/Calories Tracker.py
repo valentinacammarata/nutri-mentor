@@ -123,6 +123,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+st.markdown("""
+    <style>
+        .custom-scroll-button {
+            display: inline-block;
+            background-color: #3E8E41;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+        .custom-scroll-button:hover {
+            background-color: #2e6f32;
+        }
+    </style>
+
+    <div style="text-align: center; margin-top: 25px;">
+        <a href="#manual-entry" class="custom-scroll-button">⬇️ Go to Manual Food Entry</a>
+    </div>
+""", unsafe_allow_html=True)
 # -------------------- LINE SEPARATOR --------------------
 # Add a horizontal line separator
 st.markdown("""
@@ -144,12 +166,23 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -------------------- DASHBOARD --------------------
-# Display today's date
-today = datetime.datetime.now().strftime("%A, %d %B %Y")
-st.markdown(f"""
-    <div class='title'><em>Today's Overview</em></div>
-    <div class='subtitle'><em>{today}</em></div>
-""", unsafe_allow_html=True)
+if "selected_day" in st.session_state:
+    selected_day = st.session_state.selected_day
+    selected_date = datetime.datetime(
+        st.session_state.calendar_year,
+        st.session_state.calendar_month,
+        selected_day
+    ).strftime("%A, %d %B %Y")
+    st.markdown(f"""
+        <div class='title'><em>Today's Overview</em></div>
+        <div class='subtitle'><em>{selected_date}</em></div>
+    """, unsafe_allow_html=True)
+else:
+    today = datetime.datetime.now().strftime("%A, %d %B %Y")
+    st.markdown(f"""
+        <div class='title'><em>Today's Overview</em></div>
+        <div class='subtitle'><em>{today}</em></div>
+    """, unsafe_allow_html=True)
 
 # Display total nutritional information in a  card layout
 if "totals" not in st.session_state:
@@ -379,6 +412,7 @@ st.markdown("""
 
 # -------------------- SWITCH PAGE BUTTONS --------------------
 # Titolo e descrizione centrati
+st.markdown("<a name='manual-entry'></a>", unsafe_allow_html=True) #riconduce al link
 st.markdown("""
     <div style="text-align: center; color: green;">
         <h2 class="subtitle">🍽️ Manual Food Entry</h2>
