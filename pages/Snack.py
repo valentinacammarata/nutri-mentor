@@ -4,7 +4,7 @@ from datetime import date
 from streamlit_extras.switch_page_button import switch_page  
 
 # -------------------- CSS STYLES --------------------
-with open("styles.css") as f:
+with open("ressources/styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # -------------------- TITLE AND SUB-TITLE --------------------
@@ -45,7 +45,7 @@ st.markdown("""
 # Add a centered date input widget with emojis and styled title
 st.markdown("""
     <div style="text-align: center;">
-        <h2 class="subtitle">📅 Select the Day for Your Snack Entries </h2>
+        <h2 class="subtitle">📅 Select the Day for Your Dinner's Entries </h2>
     </div>
 """, unsafe_allow_html=True)
 
@@ -248,3 +248,7 @@ if st.session_state.saved_meals:
             """, unsafe_allow_html=True)
 else:
     st.warning("No meals saved. Add meals to see totals.")
+
+
+
+
