@@ -51,7 +51,6 @@ st.markdown(f"<div class='subtitle'>Here are your Preferences</div>", unsafe_all
 st.markdown(f"<p style='font-size: 20px; margin-left: 50px;'><b>🎯 Goal:</b> {goal}</p>", unsafe_allow_html=True)
 st.markdown(f"<p style='font-size: 20px; margin-left: 50px;'><b>🥗 Diet:</b> {diet}</p>", unsafe_allow_html=True)
 
-@st.cache_data # this caches the data so that it doesn't have to be fetched again if the user goes back to the page
 def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this function fetches recipes based on the user's dietary preference and goal
     if test_mode:       # this is a test mode that uses a local JSON file with fictious recipes instead of the API, for when I reach the limit of the API key
         with open('sample_recipes.json', 'r') as f:
@@ -59,7 +58,7 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this func
         return data.get("results", [])
     
     calorie_ranges = {                              # this is a dictionary that contains the filters for each goal
-        "just eat Healthier :)": "minHealthScore=80",       # for eat healthier, we take the health score given by the API
+        "just eat Healthier :)": "",       
         "Lose Weight": "maxCalories=500",
         "Build Muscle": "minCalories=600&maxCalories=1000",
         "None": "minCalories=0&maxCalories=10000"
@@ -67,7 +66,9 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this func
 
     goal_calories = calorie_ranges.get(goal, "calories=2000")  # Default to 2000 kcal, so if the user selects "None", the goal_calories is automatically set to 2000 kcal 
 
-    url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=popularity&number=5&apiKey={API_KEY_SPOONACULAR}"
+    url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=healthiness&number=20&addRecipeInformation=true&apiKey={API_KEY_SPOONACULAR}"
+    
+    st.text(f"📡 Requesting: {url}")
 
     response = requests.get(url)        # this sends a GET request to the Spoonacular API, based on the url created above (and with the details of the user's preferences)
     if response.status_code == 200:
@@ -91,7 +92,6 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):    # this func
         st.error(f"Unexpected error occurred. Status code: {response.status_code}")
         return []
 
-@st.cache_data # this caches the data so that it doesn't have to be fetched again if the user goes back to the page
 def get_recipe_details(recipe_id, test_mode=False):      # this function fetches the details of a specific recipe based on its ID
     if test_mode:   # this is a test mode that uses a local JSON file instead of the API, for when I reached the limit of the API key
         with open('sample_recipe_details.json', 'r') as f:
@@ -185,6 +185,7 @@ get_wine_pairing = st.checkbox("🍷 Include wine pairing suggestions")  # Check
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) # this add a line separator
 st.markdown('<p class="subtitle">All set! Just press the button to get your recipes!</p>', unsafe_allow_html=True)
 if st.button("🧑🏼‍🍳 Serve the Recipes!"):                                # this button fetches the recipes based on the user's preferences
+    
     diet = "" if diet == "None" else diet.lower()
     cuisine = "" if cuisine == "Any" else cuisine.lower()   # this checks if the user selected "Any" for the cuisine, if so, it sets the cuisine to an empty string
 
@@ -214,12 +215,16 @@ else:
 if recipes:             # this checks if there are any recipes in the list
     st.subheader("Here are some recipes based on your preferences:")
     
+    for r in recipes:
+        st.text(f"🍽️ {r.get('title')} - Health Score: {r.get('healthScore')}")
+
+    
     if goal == "just eat Healthier :)":     # if the user selected "eat healthier", we filter the recipes based on the health score
-        recipes = [r for r in recipes if r.get("healthScore", 0) >= 80]
+        recipes = [r for r in recipes if r.get("healthScore", 0) >= 60]
 
     if not recipes:
         if goal == "just eat Healthier :)":     
-            st.warning("No healthy recipes found with a health score of 80 or more.")
+            st.warning("No healthy recipes found with a health score of 60 or more.")
         elif goal.lower() == "build muscle":
             st.warning("No recipes found that meet your muscle-building criteria.")
         else:
@@ -230,7 +235,7 @@ if recipes:             # this checks if there are any recipes in the list
         for recipe in recipes:          # this loops through the recipes and displays them
             details = get_recipe_details(recipe["id"], test_mode=test_mode)  # this calls the get_recipe_details function and stores the results in the details variable
             
-            if goal == "just eat Healthier :)" and details.get("healthScore", 0) < 80:  # this checks if the recipe has a health score of 80 or more, if not, it skips the recipe
+            if goal == "just eat Healthier :)" and details.get("healthScore", 0) < 60:  # this checks if the recipe has a health score of 60 or more, if not, it skips the recipe
                 continue
             
             if goal.lower() == "build muscle":
