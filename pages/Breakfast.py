@@ -1,8 +1,7 @@
 import streamlit as st
 import requests
 from datetime import date
-from streamlit_extras.switch_page_button import switch_page 
-import os 
+from streamlit_extras.switch_page_button import switch_page  
 
 # -------------------- CSS STYLES --------------------
 with open("ressources/styles.css") as f:
@@ -46,7 +45,7 @@ st.markdown("""
 # Add a centered date input widget with emojis and styled title
 st.markdown("""
     <div style="text-align: center;">
-        <h2 class="subtitle">📅 Select the Day for Your Breakfast Entries </h2>
+        <h2 class="subtitle">📅 Select the Day for Your Breakfast's Entries </h2>
     </div>
 """, unsafe_allow_html=True)
 
@@ -107,7 +106,7 @@ if "saved_meals" not in st.session_state:
     st.session_state.saved_meals = []
 
 # USDA API Key
-API_KEY = os.getenv("API_KEY_BORG")
+API_KEY = "aL8QBhKyNY5zMFjZioZY0yQCk8GgtHjtaBjbsMfH"
 
 # Function to fetch nutritional data
 def fetch_food_data(query):
@@ -249,3 +248,7 @@ if st.session_state.saved_meals:
             """, unsafe_allow_html=True)
 else:
     st.warning("No meals saved. Add meals to see totals.")
+
+
+
+

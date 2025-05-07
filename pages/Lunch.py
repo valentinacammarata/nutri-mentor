@@ -45,7 +45,7 @@ st.markdown("""
 # Add a centered date input widget with emojis and styled title
 st.markdown("""
     <div style="text-align: center;">
-        <h2 class="subtitle">📅 Select the Day for Your Breakfast Entries </h2>
+        <h2 class="subtitle">📅 Select the Day for Your Lunch Entries </h2>
     </div>
 """, unsafe_allow_html=True)
 

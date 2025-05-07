@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 # Set the page title and layout
 st.set_page_config(page_title="Dashboard", layout="centered")
 
+
 # -------------------- CSS STYLES --------------------
 # Load custom CSS styles from a file
 with open("ressources/styles.css") as f:
