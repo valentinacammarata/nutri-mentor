@@ -1,40 +1,91 @@
-{
-    "id": 1,
-    "title": "Healthy Avocado Salad",
-    "readyInMinutes": 15,
-    "servings": 2,
-    "healthScore": 90,
-    "vegetarian": true,
-    "vegan": true,
-    "glutenFree": true,
-    "dairyFree": true,
-    "veryHealthy": true,
-    "cheap": false,
-    "sustainable": false,
-    "veryPopular": true,
+[ 
+ {
+  "id": 12345,
+  "title": "Grilled Chicken Salad",
+  "readyInMinutes": 30,
+  "nutrition": {
+      "nutrients": [
+          { "name": "Protein", "amount": 25 },
+          { "name": "Calories", "amount": 300 },
+          { "name": "Carbohydrates", "amount": 20 },
+          { "name": "Fat", "amount": 10 }
+      ]
+  },
+  "healthinessScore": 85,
+  "dietTags": ["gluten free", "high protein", "healthy"],
+  "ingredients": [
+      "200g chicken breast",
+      "100g mixed greens",
+      "50g cherry tomatoes",
+      "1 tbsp olive oil",
+      "1 tbsp balsamic vinegar",
+      "Salt and pepper to taste"
+  ],
+  "instructions": [
+      "Grill the chicken breast until fully cooked, about 6-8 minutes per side.",
+      "In a large bowl, combine mixed greens and cherry tomatoes.",
+      "Slice the grilled chicken and add it to the salad.",
+      "Drizzle olive oil and balsamic vinegar over the salad.",
+      "Season with salt and pepper, then toss to combine."
+  ]
+  },
+  {
+    "id": 67890,
+    "title": "Vegan Pasta",
+    "readyInMinutes": 20,
     "nutrition": {
       "nutrients": [
-        { "name": "Calories", "amount": 250 },
-        { "name": "Fat", "amount": 18 },
-        { "name": "Carbohydrates", "amount": 15 },
-        { "name": "Protein", "amount": 6 }
+        { "name": "Protein", "amount": 10 },
+        { "name": "Calories", "amount": 400 },
+        { "name": "Carbohydrates", "amount": 50 },
+        { "name": "Fat", "amount": 5 }
       ]
     },
-    "extendedIngredients": [
-      { "original": "1 ripe avocado" },
-      { "original": "1 cup mixed greens" },
-      { "original": "1 tbsp olive oil" },
-      { "original": "1 tsp lemon juice" }
+    "healthinessScore": 75,
+    "dietTags": ["vegan", "dairy free", "healthy"],
+    "ingredients": [
+      "200g whole wheat pasta",
+      "100g cherry tomatoes",
+      "50g spinach",
+      "2 cloves garlic",
+      "1 tbsp olive oil",
+      "Salt and pepper to taste"
     ],
-    "analyzedInstructions": [
-      {
-        "steps": [
-          { "number": 1, "step": "Slice the avocado." },
-          { "number": 2, "step": "Mix greens with olive oil and lemon juice." },
-          { "number": 3, "step": "Top the salad with avocado slices." }
-        ]
-      }
+    "instructions": [
+      "Cook the pasta according to package instructions.",
+      "In a pan, heat olive oil and sauté minced garlic until fragrant.",
+      "Add cherry tomatoes and spinach to the pan and cook until softened.",
+      "Drain the pasta and add it to the pan with the vegetables.",
+      "Season with salt and pepper, then toss to combine."
+    ]
+  },
+  {
+    "id": 11223,
+    "title": "Avocado Toast",
+    "readyInMinutes": 10,
+    "nutrition": {
+      "nutrients": [
+        { "name": "Protein", "amount": 8 },
+        { "name": "Calories", "amount": 250 },
+        { "name": "Carbohydrates", "amount": 30 },
+        { "name": "Fat", "amount": 12 }
+      ]
+    },
+    "healthinessScore": 90,
+    "dietTags": ["vegetarian", "dairy free", "healthy"],
+    "ingredients": [
+      "2 slices whole grain bread",
+      "1 ripe avocado",
+      "1 tsp lemon juice",
+      "Salt and pepper to taste",
+      "Optional: red pepper flakes"
     ],
-    "dishTypes": ["salad"]
+    "instructions": [
+      "Toast the slices of bread until golden brown.",
+      "Mash the avocado in a bowl and mix in lemon juice, salt, and pepper.",
+      "Spread the avocado mixture evenly on the toasted bread.",
+      "Sprinkle with red pepper flakes if desired, and serve immediately."
+    ]
   }
-  
+]
+
