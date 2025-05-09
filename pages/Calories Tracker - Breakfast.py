@@ -4,6 +4,7 @@ from datetime import date
 from streamlit_extras.switch_page_button import switch_page  
 import json
 import os
+from dotenv import load_dotenv
 
 # -------------------- CONFIGURAZIONE FILE JSON --------------------
 calendar_recipes_path = "ressources/calendar_recipes.json"
@@ -48,9 +49,13 @@ selected_date = st.date_input("Select a date for your meal:", value=date.today()
 date_key = selected_date.strftime("%Y-%m-%d")
 
 # -------------------- API USDA --------------------
-API_KEY = "aL8QBhKyNY5zMFjZioZY0yQCk8GgtHjtaBjbsMfH"
+API_KEY = os.getenv("API_KEY_USDA")
 
 def fetch_food_data(query):
+    if not API_KEY:
+        st.error("API key not found. Please check your .env file.")
+        return None
+
     url = "https://api.nal.usda.gov/fdc/v1/foods/search"
     params = {"api_key": API_KEY, "query": query, "pageSize": 1}
     response = requests.get(url, params=params)

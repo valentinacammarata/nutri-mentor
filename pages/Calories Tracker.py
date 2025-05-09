@@ -271,8 +271,8 @@ user_goal = user_prefs.get("goal", "just eat Healthier :)")  # Default to "just 
 
 # Define maximum values for each goal
 goals = {
-    "Build Muscle": {"calories": 3000, "protein": 210, "carbs": 400, "fat": 90},
-    "Lose Weight": {"calories": 1900, "protein": 150, "carbs": 350, "fat": 50},
+    "Build Muscle": {"calories": 2700, "protein": 180, "carbs": 350, "fat": 80},
+    "Lose Weight": {"calories": 1700, "protein": 135, "carbs": 300, "fat": 40},
 }
 
 # Check if the user's goal is in the defined goals
