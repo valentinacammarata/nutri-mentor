@@ -92,7 +92,7 @@ if st.button("Add Food"):
                 new_entry = {
                     "recipe_title": food.get('description').capitalize(),
                     "selected_date": date_key,
-                    "meal_category": "Lunch",
+                    "meal_category": "Snack",
                     "nutrition": {
                         "calories": round(calories, 2),
                         "carbohydrates": round(carbs, 2),

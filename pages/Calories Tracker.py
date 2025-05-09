@@ -9,6 +9,9 @@ import json
 # Set the page title and layout
 st.set_page_config(page_title="Dashboard", layout="centered")
 
+# Ensure st.session_state.recipes is initialized as a dictionary
+if "recipes" not in st.session_state:
+    st.session_state.recipes = {}
 
 # -------------------- CSS STYLES --------------------
 # Load custom CSS styles from a file
@@ -449,21 +452,33 @@ for week in month_days:
                 if st.button(f"{day}", key=f"day_{day}_{st.session_state.calendar_month}_{st.session_state.calendar_year}"):
                     st.session_state.selected_day = day
 
-# Display the selected day and allow adding a recipe
+# -------------------- DISPLAY SELECTED DAY ENTRIES --------------------
+
+# Display the selected day and show entries for that day
 if "selected_day" in st.session_state:
     selected_day = st.session_state.selected_day
-    selected_date_key = f"{st.session_state.calendar_year}-{st.session_state.calendar_month}-{selected_day}"
+    selected_date_key = f"{st.session_state.calendar_year}-{st.session_state.calendar_month:02d}-{selected_day:02d}"
 
     st.markdown(f"### Selected Day: {selected_day} {calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}")
 
-    # Selettore del tipo di pasto
-    meal_type = st.selectbox("Select meal type:", ["Breakfast", "Lunch", "Dinner", "Snack"])
+    # Filter meals for the selected date
+    meals_today = [meal for meal in st.session_state["calendar_recipes"] if meal["selected_date"] == selected_date_key]
 
-    # Inizializza la struttura se non esiste
-    if selected_date_key not in st.session_state.recipes:
-        st.session_state.recipes[selected_date_key] = {}
+    # Organize meals by meal type
+    meals_by_type = {"Breakfast": [], "Lunch": [], "Dinner": [], "Snack": []}
+    for meal in meals_today:
+        meal_type = meal.get("meal_category", "Other")
+        if meal_type in meals_by_type:
+            meals_by_type[meal_type].append(meal)
 
-
+    # Display meals by type
+    for meal_type, meals in meals_by_type.items():
+        st.markdown(f"#### {meal_type}")
+        if meals:
+            for meal in meals:
+                st.markdown(f"- **{meal['recipe_title']}**")
+        else:
+            st.markdown("No data available.")
    
 # -------------------- LINE SEPARATOR --------------------
 # Add another horizontal line separator
