@@ -186,45 +186,56 @@ else:
         <div class='subtitle'><em>{today}</em></div>
     """, unsafe_allow_html=True)
 
-# Display total nutritional information in a  card layout
-if "totals" not in st.session_state:
-    st.session_state.totals = {
-        "calories": 0.0,
-        "protein": 0.0,
-        "fat": 0.0,
-        "carbs": 0.0
-    }
+# -------------------- TOTAL NUTRITIONAL INFORMATION --------------------
+# Carica i dati dal file JSON
+def load_calendar_recipes():
+    try:
+        with open("ressources/calendar_recipes.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
 
-totals = st.session_state.totals
+calendar_recipes = load_calendar_recipes()
 
-st.markdown("""
+# Seleziona una data per visualizzare i totali
+selected_date = st.date_input("Select a date to view totals:", value=datetime.datetime.now().date())
+selected_date_str = selected_date.strftime("%Y-%m-%d")
+
+# Filtra i pasti per la data selezionata
+meals_today = [meal for meal in calendar_recipes if meal["selected_date"] == selected_date_str]
+
+# Calcola i totali per la data selezionata
+totals = {
+    "calories": sum(meal["nutrition"]["calories"] for meal in meals_today),
+    "protein": sum(meal["nutrition"]["protein"] for meal in meals_today),
+    "fat": sum(meal["nutrition"]["fat"] for meal in meals_today),
+    "carbs": sum(meal["nutrition"]["carbohydrates"] for meal in meals_today),
+}
+
+# Mostra i totali in un layout a scheda
+st.markdown(f"""
 <div class="dashboard-box">
-    <div class="dashboard-title">Total Nutritional Information for All Meals</div>
+    <div class="dashboard-title">Total Nutritional Information for {selected_date_str}</div>
     <div class="dashboard-stats">
         <div>
             <div class="stats-text">Calories</div>
-            <div class="stats-value">{calories:.2f} kcal</div>
+            <div class="stats-value">{totals['calories']:.2f} kcal</div>
         </div>
         <div>
             <div class="stats-text">Protein</div>
-            <div class="stats-value">{protein:.2f} g</div>
+            <div class="stats-value">{totals['protein']:.2f} g</div>
         </div>
         <div>
             <div class="stats-text">Fat</div>
-            <div class="stats-value">{fat:.2f} g</div>
+            <div class="stats-value">{totals['fat']:.2f} g</div>
         </div>
         <div>
             <div class="stats-text">Carbohydrates</div>
-            <div class="stats-value">{carbs:.2f} g</div>
+            <div class="stats-value">{totals['carbs']:.2f} g</div>
         </div>
     </div>
 </div>
-""".format(
-    calories=totals['calories'],
-    protein=totals['protein'],
-    fat=totals['fat'],
-    carbs=totals['carbs']
-), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # -------------------- BAR CHARTS FOR GOALS --------------------
 
