@@ -9,5 +9,38 @@
             "fat": 10,
             "protein": 25
         }
+    },
+    {
+        "recipe_title": "Chicken",
+        "selected_date": "2025-05-21",
+        "meal_category": "Breakfast",
+        "nutrition": {
+            "calories": 188.0,
+            "carbohydrates": 1.18,
+            "fat": 9.41,
+            "protein": 24.7
+        }
+    },
+    {
+        "recipe_title": "Steak",
+        "selected_date": "2025-05-21",
+        "meal_category": "Dinner",
+        "nutrition": {
+            "calories": 556.0,
+            "carbohydrates": 111.0,
+            "fat": 0.0,
+            "protein": 0.0
+        }
+    },
+    {
+        "recipe_title": "Apple",
+        "selected_date": "2025-05-09",
+        "meal_category": "Breakfast",
+        "nutrition": {
+            "calories": 52.0,
+            "carbohydrates": 14.3,
+            "fat": 0.65,
+            "protein": 0.0
+        }
     }
 ]
