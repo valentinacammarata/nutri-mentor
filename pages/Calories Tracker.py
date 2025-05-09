@@ -278,29 +278,29 @@ if user_goal in goals:
 
     # Create bar chart data
     labels = ["Calories", "Protein", "Carbs", "Fat"]
-    values = [percentages["calories"], percentages["protein"], percentages["carbs"], percentages["fat"]]
+    values = [totals["calories"], totals["protein"], totals["carbs"], totals["fat"]]
     max_values_list = [max_values["calories"], max_values["protein"], max_values["carbs"], max_values["fat"]]
 
     # Plot the bar charts
     fig, ax = plt.subplots(figsize=(8, 5))
     bars = ax.bar(labels, values, color=["#4caf50", "#2196f3", "#ff9800", "#f44336"], alpha=0.8)
 
-    # Add value labels on top of the bars
-    for bar, value, max_value in zip(bars, values, max_values_list):
+    # Add value/max value labels on top of the bars
+    for i, bar in enumerate(bars):
+        unit = "kcal" if labels[i] == "Calories" else "g"
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             bar.get_height() + 2,
-            f"{value:.1f}%\n({totals[labels[bars.index(bar)].lower()]:.1f}/{max_value} g)",
+            f"{values[i]:.0f}/{max_values_list[i]} {unit}",
             ha="center",
             va="bottom",
             fontsize=10,
         )
 
     # Customize the chart
-    ax.set_ylim(0, 120)  # Allow some space above 100% for labels
-    ax.set_ylabel("Percentage of Goal Reached (%)")
+    ax.set_ylim(0, max(max_values_list) * 1.2)  # Adjust the y-axis limit
+    ax.set_ylabel("Nutritional Values")
     ax.set_title(f"Progress Towards {user_goal} Goals")
-    ax.axhline(100, color="gray", linestyle="--", linewidth=1, alpha=0.7)  # Add a line at 100%
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels)
 
@@ -310,8 +310,6 @@ else:
     st.info("No goal selected or goal not supported.")
 
 # -------------------- CIRCULAR PROGRESS CHARTS FOR GOALS --------------------
-
-import matplotlib.pyplot as plt
 
 # Check if the user's goal is in the defined goals
 if user_goal in goals:
@@ -327,7 +325,6 @@ if user_goal in goals:
 
     # Define labels, values, and colors for the circular charts
     labels = ["Calories", "Protein", "Carbs", "Fat"]
-    values = [percentages["calories"], percentages["protein"], percentages["carbs"], percentages["fat"]]
     colors = ["#4caf50", "#2196f3", "#ff9800", "#f44336"]  # Green, Blue, Orange, Red
 
     # Create circular progress charts
@@ -336,7 +333,7 @@ if user_goal in goals:
     for i, ax in enumerate(axes):
         # Create a pie chart with the percentage and remaining space
         ax.pie(
-            [values[i], 100 - values[i]],
+            [percentages[labels[i].lower()], 100 - percentages[labels[i].lower()]],
             colors=[colors[i], "#e0e0e0"],  # Use the color and a light gray for the remaining
             startangle=90,
             counterclock=False,
@@ -344,7 +341,7 @@ if user_goal in goals:
         )
         # Add the percentage text in the center
         ax.text(
-            0, 0, f"{values[i]:.0f}%", ha="center", va="center", fontsize=16, fontweight="bold", color=colors[i]
+            0, 0, f"{percentages[labels[i].lower()]:.0f}%", ha="center", va="center", fontsize=14, fontweight="bold", color=colors[i]
         )
         # Add the label below the chart
         ax.set_title(labels[i], fontsize=14, pad=20)
