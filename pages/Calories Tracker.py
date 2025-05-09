@@ -25,6 +25,17 @@ st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
 st.markdown('<p class="title">Welcome to Your Daily Dashboard</p>', unsafe_allow_html=True)
 st.markdown(f'<div class="description">Manage your diet more intelligently, effortlessly track your caloric intake, and gain deeper insights into your daily nutritional progress. NutriMentor empowers you to stay consistent, make informed food choices, and achieve your health goals with confidence and ease.</p>', unsafe_allow_html=True)
 
+# -------------------- SCROLL-DOWN BUTTON --------------------
+st.markdown("""<div style="text-align: center; margin-top: 25px;">
+        <a href="#manual-entry" class="custom-scroll-button">⬇️ Go to Manual Food Entry</a>
+    </div>
+""", unsafe_allow_html=True)
+
+# -------------------- SWITCH TO RECIPES GENERATOR --------------------
+    # Add a button to navigate to the recipes generator page
+if st.button("🍳 Go to Recipes Generator"):
+    switch_page("Recipes Generator")
+
 # -------------------- LINE SEPARATOR --------------------
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
@@ -221,15 +232,6 @@ if user_goal in goals:
     st.pyplot(fig)
 else:
     st.info("No goal selected or goal not supported.")
-
-    
-# -------------------- LINE SEPARATOR --------------------
-st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
-
-# -------------------- SWITCH TO RECIPES GENERATOR --------------------
-    # Add a button to navigate to the recipes generator page
-if st.button("🍳 Go to Recipes Generator"):
-    switch_page("Recipes Generator")
 
 # -------------------- LINE SEPARATOR --------------------
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 

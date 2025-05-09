@@ -375,13 +375,14 @@ else:
 
 display_calendar_recipes()
 
+# ------------------ Save recipes to calendar functions -----------------------------------
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Press the button below to save these recipes to your calendar!</p>', unsafe_allow_html=True)
 
 if st.button("✅ Save my Recipes!"):
     save_to_file()
 
-if st.button("🗑️ Reset Calendar"):
+if st.button("🗑️ Reset Calendar"): 
     reset_calendar()
 
 if st.button("📂 View Saved Recipes"):
@@ -402,9 +403,10 @@ if st.button("📂 View Saved Recipes"):
     except json.JSONDecodeError:
         st.error("Error reading the saved recipes file.")
 
+# ------------------ Navigation buttons to other sections -----------------------------------
 st.markdown('<p class="subtitle">Navigate to other sections:</p>', unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
+col1, col2 = st.columns(2)      # Create two columns for buttons
 with col1:
     if st.button("📊 Go to Calories Tracker"):
         switch_page("Calories Tracker")
