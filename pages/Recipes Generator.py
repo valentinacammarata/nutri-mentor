@@ -122,17 +122,11 @@ def get_recipe_details(recipe_id, test_mode=False):
     if test_mode:  # Use local JSON file in test mode
         try:
             with open('ressources/sample_recipe_details.json', 'r') as f:
-                data = json.load(f)  # Parse JSON file
-                #st.write("Loaded test data:", data)  # Debug: Log the loaded test data
-                if isinstance(data, list):  # Ensure data is a list
-                    # Simulate fetching details for a specific recipe ID
+                data = json.load(f)
+                if isinstance(data, list):
                     recipe_details = next((recipe for recipe in data if recipe["id"] == recipe_id), None)
-                    if recipe_details:
-                        #st.write("Recipe details found:", recipe_details)  # Debug: Log the recipe details
-                        return recipe_details
-                    else:
-                        st.warning(f"No recipe found with ID {recipe_id} in test data.")
-                        return {}
+                    #st.write("Recipe details (test mode):", recipe_details)  # Debug
+                    return recipe_details
                 else:
                     st.error("Test data is not in the expected format (list of recipes).")
                     return {}
@@ -146,14 +140,15 @@ def get_recipe_details(recipe_id, test_mode=False):
         url = f"https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=true&apiKey={API_KEY_SPOONACULAR}"
         response = requests.get(url)
         if handle_api_error(response):
-            return response.json()
+            data = response.json()
+            return data
         else:
             return {}
 
 # ------------------ Display recipe details functions -----------------------------------------
 def display_recipe_details(details):
     with st.expander("📋 Recipe Details"):
-        # Extract diet tags from the details
+        # Estrai i diet tags dai dettagli
         diet_tags = details.get("dietTags", [])
         active_diets = diet_tags if diet_tags else []
 
@@ -164,23 +159,23 @@ def display_recipe_details(details):
 # ------------------ Display recipe attributes functions -------------------------------------
 def display_recipe_attributes(details, active_diets):
     attributes = [
-        ("Ready in", f"{details.get('readyInMinutes', 'N/A')} min"),  # Use .get() with a default value
+        ("Ready in", f"{details.get('readyInMinutes', 'N/A')} min"),
         ("Servings", details.get('servings', 'N/A')),
-        ("Health Score", f"{int(details.get('healthinessScore', 0))} / 100"),  # Corrected key
+        ("Health Score", f"{details.get('healthScore', 'N/A')} / 100"),  # Usa 'healthScore' se 'healthinessScore' non è presente
         ("Diet Tags", ', '.join(active_diets) if active_diets else 'None')
     ]
     
     for label, value in attributes:
         st.markdown(f"<p style='margin: 0;'><b>{label}:</b> {value}</p>", unsafe_allow_html=True)
-        
+
 # ------------------ Display nutrition information functions ---------------------------------
 def display_nutrition_information(details):
     if "nutrition" in details and details["nutrition"].get("nutrients"):
         nutrients = details.get("nutrition", {}).get("nutrients", [])
-        calories = next((n for n in nutrients if n["name"] == "Calories"), {}).get("amount")
-        carbs = next((n for n in nutrients if n["name"] == "Carbohydrates"), {}).get("amount")
-        fat = next((n for n in nutrients if n["name"] == "Fat"), {}).get("amount")
-        protein = next((n for n in nutrients if n["name"] == "Protein"), {}).get("amount")
+        calories = next((n["amount"] for n in nutrients if n["name"] == "Calories"), None)
+        carbs = next((n["amount"] for n in nutrients if n["name"] == "Carbohydrates"), None)
+        fat = next((n["amount"] for n in nutrients if n["name"] == "Fat"), None)
+        protein = next((n["amount"] for n in nutrients if n["name"] == "Protein"), None)
 
         with st.container():
             st.markdown("<br>", unsafe_allow_html=True)
@@ -198,19 +193,26 @@ def display_nutrition_information(details):
 
             st.markdown("</div>", unsafe_allow_html=True)
     else:
-        st.info("Nutrition information not available.")      
+        st.info("Nutrition information not available.")    
 
 # ------------------ Display ingredients and instructions functions ---------------------------
 def display_ingredients_and_instructions(details):
+    # Mostra gli ingredienti
     st.markdown("### Ingredients")
-    ingredients = details.get("ingredients", [])
-    st.write("\n".join([f"- {ing}" for ing in ingredients]))
+    ingredients = details.get("extendedIngredients", [])  # Usa 'extendedIngredients' per l'API
+    if ingredients:
+        st.markdown("\n".join([f"- {ing['original']}" for ing in ingredients]))  # Usa 'original' per il testo completo
+    else:
+        st.info("No ingredients available.")
 
+    # Mostra le istruzioni
     st.markdown("### Instructions")
-    instructions = details.get("instructions", [])
+    instructions = details.get("analyzedInstructions", [])
     if instructions:
-        steps = [f"{i + 1}. {step}" for i, step in enumerate(instructions)]
-        st.write("\n".join(steps))
+        steps = []
+        for instruction in instructions:
+            steps.extend([f"{i + 1}. {step['step']}" for i, step in enumerate(instruction.get("steps", []))])
+        st.markdown("\n".join(steps))  # Lista numerata
     else:
         st.info("No instructions available.")
 
@@ -270,13 +272,16 @@ def display_recipe(recipe, index):
             st.warning(f"Details not found for recipe ID {recipe['id']}.")
 
         # Form to save recipe to calendar
-        unique_key = f"calendar_form_{recipe['id']}_{index}_{uuid.uuid4()}"  # uuid.uuid4() generates a unique ID, this ensures that each form has a unique key
-        with st.form(unique_key):  # unique_key is used to ensure that each form has a unique key
+        unique_key = f"calendar_form_{recipe['id']}_{index}"  # Use a consistent key
+        #st.write(f"Form unique key: {unique_key}")  # Debug
+
+        with st.form(unique_key):
             selected_date = st.date_input(f"📅 Add to calendar for {recipe['title']}", min_value=datetime.date.today())
             meal_category = st.selectbox("Choose the meal category:", ["Breakfast", "Lunch", "Dinner", "Snack"])
             submitted = st.form_submit_button(f"Save {recipe['title']} to Calendar")
 
             if submitted:
+                #st.write(f"Form submitted for recipe ID: {recipe['id']}")  # Debug
                 save_recipe_to_calendar(recipe, selected_date, meal_category, details)
 
 # ------------------ Display wine pairing functions ----------------------------------------
@@ -306,18 +311,17 @@ def extract_food_from_recipe(recipe, details):
 
 # ------------------ Save recipe to calendar functions -----------------------------------
 def save_recipe_to_calendar(recipe, selected_date, meal_category, details):
-    # Extract nutrition information
+    # Extract nutritional information
     nutrients = details.get("nutrition", {}).get("nutrients", [])
     calories = next((n["amount"] for n in nutrients if n["name"] == "Calories"), None)
     carbs = next((n["amount"] for n in nutrients if n["name"] == "Carbohydrates"), None)
     fat = next((n["amount"] for n in nutrients if n["name"] == "Fat"), None)
     protein = next((n["amount"] for n in nutrients if n["name"] == "Protein"), None)
 
-    # Save recipe with nutrition info to session state
-    st.session_state["calendar_recipes"].append({
-        "recipe_id": recipe["id"],
+    # Create the recipe entry with only the required fields
+    recipe_entry = {
         "recipe_title": recipe["title"],
-        "selected_date": selected_date,
+        "selected_date": selected_date.isoformat(),  # Convert date to string for JSON compatibility
         "meal_category": meal_category,
         "nutrition": {
             "calories": calories,
@@ -325,8 +329,15 @@ def save_recipe_to_calendar(recipe, selected_date, meal_category, details):
             "fat": fat,
             "protein": protein
         }
-    })
-    st.success(f"{recipe['title']} added to your calendar with nutrition info!")
+    }
+
+    # Initialize the calendar_recipes list in session state if not already present
+    if "calendar_recipes" not in st.session_state:
+        st.session_state["calendar_recipes"] = []
+
+    # Append the recipe entry to the calendar
+    st.session_state["calendar_recipes"].append(recipe_entry)
+    st.success(f"{recipe['title']} added to your calendar!")
 
 # ------------------ Display calendar recipes functions -----------------------------------
 def display_calendar_recipes():
@@ -431,6 +442,16 @@ if st.button("🗑️ Reset Calendar"):
 
 # Load calendar recipes from session state or file, if necessary
 calendar_recipes = st.session_state.get("calendar_recipes", [])
+
+if st.button("📂 View Saved Recipes"):
+    try:
+        with open('ressources/calendar_recipes.json', 'r') as f:
+            saved_recipes = json.load(f)
+            st.write("Saved Recipes:", saved_recipes)
+    except FileNotFoundError:
+        st.warning("No saved recipes found.")
+    except json.JSONDecodeError:
+        st.error("Error reading the saved recipes file.")
 
 # ------------------ Buttons to navigate to other pages -----------------------------------
 st.markdown('<p class="subtitle">Navigate to other sections:</p>', unsafe_allow_html=True)

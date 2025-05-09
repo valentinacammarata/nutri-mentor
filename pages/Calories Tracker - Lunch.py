@@ -10,7 +10,7 @@ with open("ressources/styles.css") as f:
 # -------------------- TITLE AND SUB-TITLE --------------------
 st.markdown("""
     <div class="title-container">
-        <h1 class="title">Breakfast Nutritional Tracker</h1>
+        <h1 class="title">Lunch Nutritional Tracker</h1>
         <p class="subtitle" style="font-style: italic;">
             Enter a food item and its quantity to calculate your daily nutritional intake. 
             <strong>NutriMentor</strong> analyzes calories, proteins, fats, and carbohydrates instantly, 
@@ -45,7 +45,7 @@ st.markdown("""
 # Add a centered date input widget with emojis and styled title
 st.markdown("""
     <div style="text-align: center;">
-        <h2 class="subtitle">📅 Select the Day for Your Breakfast's Entries </h2>
+        <h2 class="subtitle">📅 Select the Day for Your Lunch Entries </h2>
     </div>
 """, unsafe_allow_html=True)
 
@@ -248,7 +248,3 @@ if st.session_state.saved_meals:
             """, unsafe_allow_html=True)
 else:
     st.warning("No meals saved. Add meals to see totals.")
-
-
-
-
