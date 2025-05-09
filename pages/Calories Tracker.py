@@ -131,6 +131,7 @@ user_goal = user_prefs.get("goal", "just eat Healthier :)")  # Default to "just 
 goals = {
     "Build Muscle": {"calories": 2700, "protein": 180, "carbs": 350, "fat": 80},
     "Lose Weight": {"calories": 1700, "protein": 135, "carbs": 300, "fat": 40},
+    "just eat Healthier :)": {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70},
 }
 
 # Check if the user's goal is in the defined goals
@@ -169,7 +170,7 @@ if user_goal in goals:
     # Customize the chart
     ax.set_ylim(0, max(max_values_list) * 1.2)  # Adjust the y-axis limit
     ax.set_ylabel("Nutritional Values")
-    ax.set_title(f"Progress Towards {user_goal} Goals")
+    ax.set_title(f"Progress Towards {user_goal} Goal")
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels)
 
