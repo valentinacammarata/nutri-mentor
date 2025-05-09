@@ -455,67 +455,6 @@ if "selected_day" in st.session_state:
     if selected_date_key not in st.session_state.recipes:
         st.session_state.recipes[selected_date_key] = {}
 
-    # Recupera ricetta esistente per il pasto selezionato
-    recipe_text = st.session_state.recipes[selected_date_key].get(meal_type, "")
-    recipe = st.text_area("Insert your recipe here:", recipe_text)
-
-    if st.button("✅ Save Recipe", key="save_recipe"):
-        st.session_state.recipes[selected_date_key][meal_type] = recipe
-        st.success(f"{meal_type} saved for {selected_day} {calendar.month_name[st.session_state.calendar_month]} {st.session_state.calendar_year}!")
-
-    if selected_date_key in st.session_state.recipes:
-        # Display the saved recipes section
-        st.markdown("""
-    <div style="text-align: center; color: green;">
-        <h2 class="subtitle" style="color: green;">🍽️ Saved Meals</h2>
-        <p class="description" style="color: green;">
-            View and manage your saved recipes for each day. Keep track of your favorite meals and plan your diet effortlessly.
-        </p>
-    </div>
-""", unsafe_allow_html=True)
-        
-    
-
-    meal_emojis = {
-        "Breakfast": "☕",
-        "Lunch": "🥗",
-        "Dinner": "🍝",
-        "Snack": "🍫"
-    }
-
-    for meal in ["Breakfast", "Lunch", "Dinner", "Snack"]:
-        if meal in st.session_state.recipes[selected_date_key]:
-            content = st.session_state.recipes[selected_date_key][meal]
-            st.markdown(f"**{meal_emojis[meal]} {meal}:** {content}")
-
-    filtered_recipes = {
-        date_key: recipe for date_key, recipe in st.session_state.recipes.items()
-        if len(date_key.split('-')) == 3 and date_key.split('-')[1].isdigit() and date_key.split('-')[0].isdigit()
-        and int(date_key.split('-')[1]) == st.session_state.calendar_month and int(date_key.split('-')[0]) == st.session_state.calendar_year
-    }
-
-    if filtered_recipes:
-        # Create a dropdown menu with days that have saved recipes
-        selected_date = st.selectbox(
-            "Select a day to view the saved recipe:",
-            options=sorted(filtered_recipes.keys()),
-            format_func=lambda x: f"Day {x.split('-')[2]} {calendar.month_name[int(x.split('-')[1])]} {x.split('-')[0]}"
-        )
-
-        # Display the saved recipes for the selected date
-        st.markdown(f"### Recipes for {selected_date.split('-')[2]} {calendar.month_name[int(selected_date.split('-')[1])]} {selected_date.split('-')[0]}")
-
-        meal_emojis = {
-            "Breakfast": "☕",
-            "Lunch": "🥗",
-            "Dinner": "🍝",
-            "Snack": "🍫"
-        }
-
-        for meal, content in filtered_recipes[selected_date].items():
-            st.markdown(f"**{meal_emojis.get(meal, '')} {meal}:** {content}")
-    else:
-        st.info("No recipes saved for this month.")
 
    
 # -------------------- LINE SEPARATOR --------------------
