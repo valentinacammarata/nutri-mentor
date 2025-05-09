@@ -349,6 +349,7 @@ def reset_calendar():
     st.success("✅ Calendar has been reset successfully!")
 
 # ------------------ User input for recipe search------------------------------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 st.markdown('<p class="subtitle">Customize Your Recipe Search!</p>', unsafe_allow_html=True)   
 cuisine = st.selectbox("🥙 Choose a cuisine:", ["Any", "American", "Italian", "Mexican", "Mediterranean", "French", "Indian", "Asian"])
 dish_type = st.selectbox("🥘 Choose a dish type:", ["Any", "Appetizer", "Side Dish", "Lunch", "Dinner", "Snack", "Dessert"])

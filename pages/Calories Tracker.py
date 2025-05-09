@@ -18,157 +18,15 @@ if "recipes" not in st.session_state:
 with open("ressources/styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
+
 # -------------------- PAGE TITLE --------------------
 # Display the main title and subtitle of the page
-st.markdown("""
-    <div class='title'><em>Welcome to Your Daily Dashboard</em></div>
-    <div class='subtitle'><em>Manage your diet more intelligently, effortlessly track your caloric intake, and gain deeper insights into your daily nutritional progress. NutriMentor empowers you to stay consistent, make informed food choices, and achieve your health goals with confidence and ease.</em></div>
-""", unsafe_allow_html=True)
+st.markdown('<p class="title">Welcome to Your Daily Dashboard</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="description">Manage your diet more intelligently, effortlessly track your caloric intake, and gain deeper insights into your daily nutritional progress. NutriMentor empowers you to stay consistent, make informed food choices, and achieve your health goals with confidence and ease.</p>', unsafe_allow_html=True)
 
-# Add custom CSS styles for the page
-st.markdown("""
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Inter', sans-serif;
-        }
-        .dashboard-container {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-        }
-        .title {
-            font-size: 36px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        .subtitle {
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #666;
-        }
-        .circle-container {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: conic-gradient(#4caf50 75%, #e0e0e0 0%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            position: relative;
-        }
-        .circle-text {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-        }
-        .kcal-label {
-            font-size: 14px;
-            color: #666;
-        }
-        .stats-row {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .stats-text {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-        }
-        .label-text {
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-        }
-        .progress-bar {
-            height: 8px;
-            border-radius: 5px;
-            background-color: #e0e0e0;
-            margin-top: 5px;
-        }
-        .progress {
-            height: 100%;
-            border-radius: 5px;
-            background-color: #4caf50;
-        }
-        .dashboard-box {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .dashboard-title {
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .dashboard-stats {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-        }
-        .stat-item {
-            font-size: 16px;
-            font-weight: bold;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-
-st.markdown("""
-    <style>
-        .custom-scroll-button {
-            display: inline-block;
-            background-color: #3E8E41;
-            color: white;
-            padding: 10px 24px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: background-color 0.2s ease;
-        }
-        .custom-scroll-button:hover {
-            background-color: #2e6f32;
-        }
-    </style>
-
-    <div style="text-align: center; margin-top: 25px;">
-        <a href="#manual-entry" class="custom-scroll-button">⬇️ Go to Manual Food Entry</a>
-    </div>
-""", unsafe_allow_html=True)
 # -------------------- LINE SEPARATOR --------------------
-# Add a horizontal line separator
-st.markdown("""
-    <style>
-        .separator-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .separator {
-            border: none;
-            border-top: 2px solid #3E8E41;
-            width: 50%;
-        }
-    </style>
-    <div class="separator-container">
-        <hr class='separator'>
-    </div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
 # -------------------- DASHBOARD --------------------
 if "selected_day" in st.session_state:
@@ -363,25 +221,17 @@ if user_goal in goals:
 else:
     st.info("No goal selected or goal not supported.")
 
+    
 # -------------------- LINE SEPARATOR --------------------
-# Add another horizontal line separator
-st.markdown("""
-    <style>
-        .separator-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .separator {
-            border: none;
-            border-top: 2px solid #3E8E41;
-            width: 50%;
-        }
-    </style>
-    <div class="separator-container">
-        <hr class='separator'>
-    </div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
+
+# -------------------- SWITCH TO RECIPES GENERATOR --------------------
+    # Add a button to navigate to the recipes generator page
+if st.button("🍳 Go to Recipes Generator"):
+    switch_page("Recipes Generator")
+
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
 # -------------------- CALENDAR --------------------
 # Display the calendar section
@@ -481,24 +331,7 @@ if "selected_day" in st.session_state:
             st.markdown("No data available.")
    
 # -------------------- LINE SEPARATOR --------------------
-# Add another horizontal line separator
-st.markdown("""
-    <style>
-        .separator-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .separator {
-            border: none;
-            border-top: 2px solid #3E8E41;
-            width: 50%;
-        }
-    </style>
-    <div class="separator-container">
-        <hr class='separator'>
-    </div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
 # -------------------- SWITCH PAGE BUTTONS --------------------
 # Titolo e descrizione centrati
