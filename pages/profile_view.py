@@ -112,7 +112,7 @@ st.markdown("""
 centered_col = st.columns(3)[1]
 with centered_col:
     if st.button("🔍 Go to Weight Dashboard"):
-        st.switch_page("pages/app.py")
+        st.switch_page("pages/data_visualization.py")
 
 
 st.markdown("<div style='margin-top: 80px;'></div>", unsafe_allow_html=True)
@@ -201,7 +201,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("<div class='dashboard-block'>", unsafe_allow_html=True)
     if st.button("📊 Data View", key="data_view"):
-        st.switch_page("pages/app.py")
+        st.switch_page("pages/data_visualization.py")
     st.markdown("<div class='dashboard-desc'>Track your weight data and monitor your progress visually.</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
