@@ -428,16 +428,16 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     if st.button("☕ Breakfast"):
-        st.switch_page("pages/Breakfast.py")
+        st.switch_page("pages/Calories Tracker - Breakfast.py")
 
 with col2:
     if st.button("🥗 Lunch"):
-        st.switch_page("pages/Lunch.py")
+        st.switch_page("pages/Calories Tracker - Lunch.py")
 
 with col3:
     if st.button("🍝 Dinner"):
-        st.switch_page("pages/Dinner.py")
+        st.switch_page("pages/Calories Tracker - Dinner.py")
 
 with col4:
     if st.button("🍫 Snack"):
-        st.switch_page("pages/Snack.py")
+        st.switch_page("pages/Calories Tracker - Snack.py")
