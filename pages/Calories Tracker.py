@@ -187,24 +187,32 @@ else:
     """, unsafe_allow_html=True)
 
 # -------------------- TOTAL NUTRITIONAL INFORMATION --------------------
-# Carica i dati dal file JSON
+# Load recipes from calendar_recipes.json
 def load_calendar_recipes():
     try:
         with open("ressources/calendar_recipes.json", "r") as f:
             return json.load(f)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 calendar_recipes = load_calendar_recipes()
 
-# Seleziona una data per visualizzare i totali
+# Synchronize session state with file
+if "calendar_recipes" not in st.session_state:
+    st.session_state["calendar_recipes"] = calendar_recipes
+else:
+    # Update session state if the file has new data
+    if st.session_state["calendar_recipes"] != calendar_recipes:
+        st.session_state["calendar_recipes"] = calendar_recipes
+
+# Select a date to view totals
 selected_date = st.date_input("Select a date to view totals:", value=datetime.datetime.now().date())
 selected_date_str = selected_date.strftime("%Y-%m-%d")
 
-# Filtra i pasti per la data selezionata
-meals_today = [meal for meal in calendar_recipes if meal["selected_date"] == selected_date_str]
+# Filter meals for the selected date
+meals_today = [meal for meal in st.session_state["calendar_recipes"] if meal["selected_date"] == selected_date_str]
 
-# Calcola i totali per la data selezionata
+# Calculate totals for the selected date
 totals = {
     "calories": sum(meal["nutrition"]["calories"] for meal in meals_today),
     "protein": sum(meal["nutrition"]["protein"] for meal in meals_today),
@@ -212,7 +220,7 @@ totals = {
     "carbs": sum(meal["nutrition"]["carbohydrates"] for meal in meals_today),
 }
 
-# Mostra i totali in un layout a scheda
+# Display totals in a dashboard layout
 st.markdown(f"""
 <div class="dashboard-box">
     <div class="dashboard-title">Total Nutritional Information for {selected_date_str}</div>
@@ -226,12 +234,12 @@ st.markdown(f"""
             <div class="stats-value">{totals['protein']:.2f} g</div>
         </div>
         <div>
-            <div class="stats-text">Fat</div>
-            <div class="stats-value">{totals['fat']:.2f} g</div>
-        </div>
-        <div>
             <div class="stats-text">Carbohydrates</div>
             <div class="stats-value">{totals['carbs']:.2f} g</div>
+        </div>
+        <div>
+            <div class="stats-text">Fat</div>
+            <div class="stats-value">{totals['fat']:.2f} g</div>
         </div>
     </div>
 </div>
