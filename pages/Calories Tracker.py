@@ -3,6 +3,7 @@ import datetime
 from streamlit_extras.switch_page_button import switch_page
 import calendar
 import matplotlib.pyplot as plt
+import json
 
 # -------------------- CONFIGURATION --------------------
 # Set the page title and layout
@@ -224,6 +225,124 @@ st.markdown("""
     fat=totals['fat'],
     carbs=totals['carbs']
 ), unsafe_allow_html=True)
+
+# -------------------- BAR CHARTS FOR GOALS --------------------
+
+# Add some spacing between sections
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+# Load user preferences from profile_data.json
+def load_user_preferences():
+    try:
+        with open('ressources/profile_data.json', 'r') as f:
+            data = json.load(f)
+            goals = data.get("goals", [])
+            goal = goals[0] if goals else "just eat Healthier :)"
+            diet = data.get("diet", "No Preference")
+            return {"goal": goal, "diet": diet}
+    except FileNotFoundError:
+        return {"goal": "just eat Healthier :)", "diet": "No Preference"}
+
+# Get user preferences
+user_prefs = load_user_preferences()
+user_goal = user_prefs.get("goal", "just eat Healthier :)")  # Default to "just eat Healthier :)"
+
+# Define maximum values for each goal
+goals = {
+    "Build Muscle": {"calories": 3000, "protein": 210, "carbs": 400, "fat": 90},
+    "Lose Weight": {"calories": 1900, "protein": 150, "carbs": 350, "fat": 50},
+}
+
+# Check if the user's goal is in the defined goals
+if user_goal in goals:
+    max_values = goals[user_goal]
+
+    # Calculate percentages for each nutrient
+    percentages = {
+        "calories": min((totals["calories"] / max_values["calories"]) * 100, 100),
+        "protein": min((totals["protein"] / max_values["protein"]) * 100, 100),
+        "carbs": min((totals["carbs"] / max_values["carbs"]) * 100, 100),
+        "fat": min((totals["fat"] / max_values["fat"]) * 100, 100),
+    }
+
+    # Create bar chart data
+    labels = ["Calories", "Protein", "Carbs", "Fat"]
+    values = [percentages["calories"], percentages["protein"], percentages["carbs"], percentages["fat"]]
+    max_values_list = [max_values["calories"], max_values["protein"], max_values["carbs"], max_values["fat"]]
+
+    # Plot the bar charts
+    fig, ax = plt.subplots(figsize=(8, 5))
+    bars = ax.bar(labels, values, color=["#4caf50", "#2196f3", "#ff9800", "#f44336"], alpha=0.8)
+
+    # Add value labels on top of the bars
+    for bar, value, max_value in zip(bars, values, max_values_list):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 2,
+            f"{value:.1f}%\n({totals[labels[bars.index(bar)].lower()]:.1f}/{max_value} g)",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+        )
+
+    # Customize the chart
+    ax.set_ylim(0, 120)  # Allow some space above 100% for labels
+    ax.set_ylabel("Percentage of Goal Reached (%)")
+    ax.set_title(f"Progress Towards {user_goal} Goals")
+    ax.axhline(100, color="gray", linestyle="--", linewidth=1, alpha=0.7)  # Add a line at 100%
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+
+    # Display the chart in Streamlit
+    st.pyplot(fig)
+else:
+    st.info("No goal selected or goal not supported.")
+
+# -------------------- CIRCULAR PROGRESS CHARTS FOR GOALS --------------------
+
+import matplotlib.pyplot as plt
+
+# Check if the user's goal is in the defined goals
+if user_goal in goals:
+    max_values = goals[user_goal]
+
+    # Calculate percentages for each nutrient
+    percentages = {
+        "calories": min((totals["calories"] / max_values["calories"]) * 100, 100),
+        "protein": min((totals["protein"] / max_values["protein"]) * 100, 100),
+        "carbs": min((totals["carbs"] / max_values["carbs"]) * 100, 100),
+        "fat": min((totals["fat"] / max_values["fat"]) * 100, 100),
+    }
+
+    # Define labels, values, and colors for the circular charts
+    labels = ["Calories", "Protein", "Carbs", "Fat"]
+    values = [percentages["calories"], percentages["protein"], percentages["carbs"], percentages["fat"]]
+    colors = ["#4caf50", "#2196f3", "#ff9800", "#f44336"]  # Green, Blue, Orange, Red
+
+    # Create circular progress charts
+    fig, axes = plt.subplots(1, 4, figsize=(16, 4))  # Create 4 subplots side by side
+
+    for i, ax in enumerate(axes):
+        # Create a pie chart with the percentage and remaining space
+        ax.pie(
+            [values[i], 100 - values[i]],
+            colors=[colors[i], "#e0e0e0"],  # Use the color and a light gray for the remaining
+            startangle=90,
+            counterclock=False,
+            wedgeprops={"width": 0.3},  # Make it look like a progress ring
+        )
+        # Add the percentage text in the center
+        ax.text(
+            0, 0, f"{values[i]:.0f}%", ha="center", va="center", fontsize=16, fontweight="bold", color=colors[i]
+        )
+        # Add the label below the chart
+        ax.set_title(labels[i], fontsize=14, pad=20)
+
+    # Adjust layout and display the charts in Streamlit
+    plt.tight_layout()
+    st.pyplot(fig)
+else:
+    st.info("No goal selected or goal not supported.")
 
 # -------------------- LINE SEPARATOR --------------------
 # Add another horizontal line separator
