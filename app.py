@@ -11,7 +11,7 @@ def get_base64_of_bin_file(bin_file):
         data = f.read()
     return base64.b64encode(data).decode()
 
-# Lokales Bild (im gleichen Ordner wie profile.py)
+# Lokales Bild
 image_path = "images/image.png"
 if os.path.isfile(image_path):
     img_base64 = get_base64_of_bin_file(image_path)
@@ -19,7 +19,7 @@ else:
     st.error("Bild 'image.png' nicht gefunden. Bitte stelle sicher, dass es im Ordner 'images' liegt.")
     st.stop()
 
-# Gruppenbild für den Willkommensteil
+# Gruppenbild
 group_image_path = "images/Group_image.png"
 if os.path.isfile(group_image_path):
     group_base64 = get_base64_of_bin_file(group_image_path)
@@ -27,7 +27,7 @@ else:
     st.warning("Gruppenbild nicht gefunden. Stelle sicher, dass 'Group_image.png' im Ordner 'images' liegt.")
     group_base64 = ""
 
-# Design der Seite
+# Style & Layout
 st.markdown('''
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
@@ -38,7 +38,6 @@ st.markdown('''
     background-size: cover;
     min-height: 100vh;
     font-family: 'Roboto', sans-serif;
-    position: relative;
 }
 .title-container {
     min-height: 70vh;
@@ -62,11 +61,20 @@ st.markdown('''
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 .scroll-down {
-    margin-top: 20px;
     font-size: 30px;
     animation: bounce 2s infinite;
-    color: #27ae60;
+    color: #ffffff !important;
     text-decoration: none;
+    display: block;
+    text-align: center;
+}
+.scroll-down::after {
+    content: "create your profile !";
+    display: block;
+    font-size: 16px;
+    color: #ffffff;
+    margin-top: 8px;
+    text-align: center;
 }
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
@@ -89,6 +97,7 @@ st.markdown('''
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     transition: 0.5s ease;
     cursor: pointer;
+    margin-top: 40px;
 }
 .stButton > button:hover {
     background-color: #1e8449;
@@ -97,7 +106,7 @@ st.markdown('''
 </style>
 ''', unsafe_allow_html=True)
 
-# Titelbereich
+# Header-Block
 st.markdown(f'''
 <div class="title-container">
     <img class="profile-image" src="data:image/png;base64,{img_base64}">
@@ -106,71 +115,48 @@ st.markdown(f'''
 </div>
 ''', unsafe_allow_html=True)
 
-# Willkommensbereich mit Text und Comicbild
+# Welcome-Bereich
 if group_base64:
     st.markdown(f"""
-    <div style='text-align: center; margin-top: -40px;'>
+    <div style='text-align: center; margin-top: -30px;'>
         <h2 style='color: white; font-size: 42px;'>Welcome to Nutri Mentor!</h2>
-        <p style='color: white; font-size: 26px; max-width: 900px; margin: 20px auto;'>
-        We are a team of four passionate students who created Nutri Mentor with a vision: to help people achieve a healthy lifestyle through personalized nutrition guidance. With this tool, you can set your health goals, get meal suggestions tailored to your preferences, and track your progress – all in one place. Let’s work together on building sustainable habits and reaching your full potential.
+        <p style='color: white; font-size: 26px; max-width: 900px; margin: 20px auto; line-height: 1.8;'>
+        We are a team of four passionate students who created Nutri Mentor with a vision:
+        To help people achieve a healthy lifestyle through personalized nutrition guidance.
+        With this tool, you can set your health goals, get meal suggestions tailored to your preferences,
+        and track your progress – all in one place. Let’s work together on building sustainable habits
+        and reaching your full potential.
         </p>
         <img src="data:image/png;base64,{group_base64}" style='width: 80%; max-width: 800px; margin-top: 80px; margin-bottom: 60px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.4);'>
     </div>
     """, unsafe_allow_html=True)
 
-# Button um zur Profilerstellung weiterzugehen
+# Textblock zentriert über gesamter Breite (nicht in einer schmalen Column!)
+st.markdown("""
+<div style='text-align: center; margin-top: 60px;'>
+    <p style='color: white; font-size: 18px; max-width: 900px; margin: 0 auto; line-height: 1.6;'>
+    After a quick signup, you’ll be guided through creating your personalized profile.
+    This will allow us to provide you with nutrition recommendations that match your lifestyle,
+    health goals, and dietary preferences – all in one place.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# Button zentriert unter dem Text
 col1, col2, col3 = st.columns([1, 0.3, 1])
 with col2:
-    st.markdown("<div style='display: flex; justify-content: center; margin-top: 60px;'>", unsafe_allow_html=True)
     if st.button("CREATE YOUR FREE PROFILE!", key="create_profile_button"):
         st.switch_page("pages/profilecreation.py")
 
-# Fußzeile mit Ankerziel für Pfeil oben
+# Footer
 st.markdown("""
 <div id="bottom"></div>
 <div class="footer" style="margin-top: 120px;">
     Created by Team Nutri • 2025 • Made with ❤️
 </div>
-<style>
-.scroll-down {
-    color: #27ae60 !important; /* Change arrow color to green */
-    display: block;
-    text-align: center; /* Center the arrow */
-}
-.scroll-down::after {
-    content: " create your profile !";
-    display: block;
-    font-size: 14px;
-    color: #27ae60;
-    margin-top: 5px;
-    text-align: center; /* Center the text */
-}
-</style>
 """, unsafe_allow_html=True)
 
-# Add spacing below the welcome text and move everything after the arrow further down, Text hatte zu wenig Abstand
-st.markdown("""
-<style>
-h2 {
-    margin-bottom: 80px; /* Add more space below the welcome text */
-}
-.scroll-down {
-    margin-top: 20px; /* Keep the arrow position */
-}
-div[style*='text-align: center; margin-top: -40px;'] {
-    margin-top: 100px !important; /* Move the welcome section further down */
-}
-.stButton > button {
-    margin-top: 120px; /* Move the button further down */
-}
-.footer {
-    margin-top: 200px; /* Move the footer further down */
-}
-</style>
-""", unsafe_allow_html=True)
-
-
-# Hide the sidebar by default
+# Sidebar ausblenden
 st.markdown("""
 <style>
     [data-testid="stSidebar"] {

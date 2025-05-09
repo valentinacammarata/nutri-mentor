@@ -41,7 +41,7 @@ with st.form("profile_form"):
     diet_options = ["No Preference", "Vegetarian", "Vegan", "Dairy-Free", "Gluten-Free"]
     selected_diet = st.radio("Choose one", diet_options)
 
-    submitted = st.form_submit_button("Submit Profile")
+    submitted = st.form_submit_button("Submit Profile", use_container_width=True)
 
     if submitted:
         profile_data = {
