@@ -228,12 +228,13 @@ if user_goal in goals:
             ha="center",
             va="bottom",
             fontsize=10,
+            fontweight="bold"
         )
 
     # Customize the chart
     ax.set_ylim(0, max(max_values_list) * 1.2)  # Adjust the y-axis limit
     ax.set_ylabel("Nutritional Values")
-    ax.set_title(f"Progress Towards {user_goal} Goal")
+    ax.set_title(f"Progress Towards {user_goal} Goal",fontweight="bold")
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels)
 
@@ -274,10 +275,10 @@ if user_goal in goals:
         )
         # Add the percentage text in the center
         ax.text(
-            0, 0, f"{percentages[labels[i].lower()]:.0f}%", ha="center", va="center", fontsize=14, fontweight="bold", color=colors[i]
+            0, 0, f"{percentages[labels[i].lower()]:.0f}%", ha="center", va="center", fontsize=20, fontweight="bold", color=colors[i]
         )
         # Add the label below the chart
-        ax.set_title(labels[i], fontsize=14, pad=20)
+        ax.set_title(labels[i], fontsize=20,fontweight="bold", pad=20)
 
     # Adjust layout and display the charts in Streamlit
     plt.tight_layout()
