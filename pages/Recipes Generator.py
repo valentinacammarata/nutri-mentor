@@ -8,6 +8,77 @@ import json
 import uuid # for generating unique IDs so that each recipe has a unique identifier and no conflicts occurr
 from streamlit_extras.switch_page_button import switch_page # for switching between pages
 
+
+active_page = "Recipes"  # Set the active page to "Recipes"
+
+# CSS für gleiches Button-Styling
+st.markdown(f"""
+    <style>
+        .nav-container {{
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }}
+        .stButton > button {{
+            background-color: #388e3c !important;
+            color: white !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            padding: 0.5rem 1.2rem !important;
+            border: none !important;
+        }}
+        .active-button > button {{
+            background-color: white !important;
+            color: #388e3c !important;
+            border: 2px solid #388e3c !important;
+        }}
+    </style>
+""", unsafe_allow_html=True)
+
+# Navigation zentriert mit switch_page
+st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+
+with col1:
+    if active_page == "Profile":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("👤 Profile"):
+        st.switch_page("pages/profile_view.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    if active_page == "Visual Data":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("📊 Visual Data"):
+        st.switch_page("pages/data_visualization.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    if active_page == "Recipes":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("🥗 Recipes"):
+        st.switch_page("pages/Recipes Generator.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col4:
+    if active_page == "Calories":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("📒 Calories"):
+        st.switch_page("pages/Calories Tracker.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 # -------------------- Initialize session state for recipes and calendar ----------------------
 if "recipes" not in st.session_state:
     st.session_state["recipes"] = []

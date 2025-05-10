@@ -8,41 +8,74 @@ import numpy as np
 
 active_page = "Data Visualization"  # Aktive Seite für die Navigation
 
+# CSS für gleiches Button-Styling
 st.markdown(f"""
     <style>
-        .nav-wrapper {{
+        .nav-container {{
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 1.2rem;
             margin-top: 1rem;
+            margin-bottom: 1rem;
         }}
-        .nav-button {{
-            background-color: #388e3c;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            font-family: 'Segoe UI', sans-serif;
-            border: 2px solid transparent;
+        .stButton > button {{
+            background-color: #388e3c !important;
+            color: white !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            padding: 0.5rem 1.2rem !important;
+            border: none !important;
         }}
-        .nav-button:hover {{
-            background-color: #2e7d32;
-        }}
-        .nav-button.active {{
-            background-color: white;
-            color: #2e7d32;
-            border: 2px solid #2e7d32;
+        .active-button > button {{
+            background-color: white !important;
+            color: #388e3c !important;
+            border: 2px solid #388e3c !important;
         }}
     </style>
-
-    <div class="nav-wrapper">
-        <a href="/pages/profile_view" class="nav-button {'active' if active_page == 'Profile' else ''}">👤 Profile</a>
-        <a href="/pages/data_visualization" class="nav-button {'active' if active_page == 'Visual Data' else ''}">📊 Visual Data</a>
-        <a href="/pages/Recipes Generator" class="nav-button {'active' if active_page == 'Recipes' else ''}">🥗 Recipes</a>
-        <a href="/pages/Calories Tracker" class="nav-button {'active' if active_page == 'Calories' else ''}">📒 Calories</a>
-    </div>
 """, unsafe_allow_html=True)
+
+# Navigation zentriert mit switch_page
+st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+
+with col1:
+    if active_page == "Profile":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("👤 Profile"):
+        st.switch_page("pages/profile_view.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    if active_page == "Visual Data":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("📊 Visual Data"):
+        st.switch_page("pages/data_visualization.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    if active_page == "Recipes":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("🥗 Recipes"):
+        st.switch_page("pages/Recipes Generator.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col4:
+    if active_page == "Calories":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("📒 Calories"):
+        st.switch_page("pages/Calories Tracker.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 # === TITLE SECTION (ohne Emoji, einheitlich gestylt) ===
 st.markdown("""
