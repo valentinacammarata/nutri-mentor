@@ -68,6 +68,32 @@ def fetch_food_data(query):
         st.error("Error fetching data from USDA API.")
         return None
 
+# -------------------- LOAD USER PREFERENCES --------------------
+def load_user_preferences():
+    try:
+        with open("ressources/profile_data.json", "r") as f:
+            data = json.load(f)
+            goals = data.get("goals", [])
+            goal = goals[0] if goals else "just eat Healthier :)"
+            diet = data.get("diet", "No Preference")
+            return {"goal": goal, "diet": diet}
+    except FileNotFoundError:
+        return {"goal": "just eat Healthier :)", "diet": "No Preference"}
+
+# Get user preferences
+user_prefs = load_user_preferences()
+user_goal = user_prefs.get("goal", "just eat Healthier :)")  # Default to "just eat Healthier :)"
+
+# Define maximum values for each goal
+goals = {
+    "Build Muscle": {"calories": 2700, "protein": 180, "carbs": 350, "fat": 80},
+    "Lose Weight": {"calories": 1700, "protein": 135, "carbs": 300, "fat": 40},
+    "just eat Healthier :)": {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70},
+}
+
+# Get max values for the user's goal
+max_values = goals.get(user_goal, {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70})
+
 # -------------------- FOOD INPUT --------------------
 st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍎 Search for Food Items</h2>", unsafe_allow_html=True)
 
@@ -155,10 +181,10 @@ if meals_today:
     # Bar chart for nutritional values
         nutrients = ['Carbohydrates', 'Proteins', 'Fats']
         values = [total_carbs, total_protein, total_fat]
-        max_values = [240, 96, 64]
+        max_values_list = [max_values["carbs"], max_values["protein"], max_values["fat"]]
         colors = ["#4caf50", "#2196f3", "#ff9800"]
 
-        for nutrient, value, max_value, color in zip(nutrients, values, max_values, colors):
+        for nutrient, value, max_value, color in zip(nutrients, values, max_values_list, colors):
             bar_color = color if value <= max_value else "#ff5252"
             st.markdown(f"""
                 <div style="margin-bottom: 10px;">
