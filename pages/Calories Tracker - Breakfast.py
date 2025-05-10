@@ -89,7 +89,7 @@ max_values = goals.get(user_goal, {"calories": 2200, "protein": 100, "carbs": 27
 # -------------------- SEARCH FOR FOOD BAR --------------------
 st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍎 Search for Food Items</h2>", unsafe_allow_html=True)
 
-food_query = st.text_input("Search for a food", placeholder="E.g. Apple, Banana, Coffee")
+food_query = st.text_input("Search for a food", placeholder="E.g. Apple,Banana, Coffee")
 quantity = st.number_input(    "Enter the consumed quantity (in grams or ml):",     min_value=1,     value=100,     step=1)
 
 if "totals" not in st.session_state:
