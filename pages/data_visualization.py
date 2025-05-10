@@ -120,7 +120,7 @@ df = load_data()
 if not df.empty:
     time_range = st.selectbox("Select Time Range", ["All", "Last 7 Days", "Last 30 Days"])
     if time_range == "Last 7 Days":
-        df = df[df["Date"] >= pd.Timestamp.today() - pd.Timedelta(days=7)]
+        df = df[pd.Timestamp(df["Date"]) >= pd.Timestamp.today() - pd.Timedelta(days=7)]
     elif time_range == "Last 30 Days":
         df = df[df["Date"] >= pd.Timestamp.today() - pd.Timedelta(days=30)]
     df = df.sort_values("Date")
@@ -131,7 +131,7 @@ if not df.empty:
 else:
     st.info("No data available yet. Enter something to get started.")
 
-    # ================= NEW ADVANCED BODY COMPOSITION SECTION =================
+# ================= NEW ADVANCED BODY COMPOSITION SECTION =================
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -139,10 +139,9 @@ BODY_COMP_FILE = "body_composition.json"
 
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
-    <h2 style='text-align: center;'>🧬 Advanced Body Composition Tracking</h2>
+    <h1 style='text-align: center;'>Advanced Body Composition Tracking</h1>
     <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
-        This tool is designed for individuals who are able to regularly track their body fat, muscle mass, and water content using a smart scale or other accurate method. 
-        It helps you compare body composition changes over time, whether weekly or monthly.
+        Track your body composition step by step. Enter your values for Body Fat, Muscle Mass, and Water Content below.
     </p>
 """, unsafe_allow_html=True)
 
@@ -162,28 +161,30 @@ def save_body_composition(df):
 # Load data
 comp_df = load_body_composition()
 
-with st.expander("➕ Enter New Body Composition Entry"):
-    entry_date = st.date_input("🗕️ Date", datetime.today())
+# Input section (combined entry)
+st.subheader("➕ New Body Composition Entry")
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        body_fat = st.slider("Body Fat (%)", 5.0, 50.0, 20.0, 0.1)
-    with col2:
-        muscle_mass = st.slider("Muscle Mass (%)", 10.0, 60.0, 35.0, 0.1)
-    with col3:
-        water_content = st.slider("Water Content (%)", 30.0, 70.0, 50.0, 0.1)
+entry_date = st.date_input("📅 Date", datetime.today())
 
-    if st.button("📂 Save Entry"):
-        new_entry = pd.DataFrame([{
-            "Date": entry_date,
-            "Body Fat": body_fat,
-            "Muscle Mass": muscle_mass,
-            "Water Content": water_content
-        }])
-        comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
-        comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
-        save_body_composition(comp_df)
-        st.success("Entry saved successfully!")
+col1, col2, col3 = st.columns(3)
+with col1:
+    body_fat = st.slider("Body Fat (%)", 5.0, 50.0, 20.0, 0.1)
+with col2:
+    muscle_mass = st.slider("Muscle Mass (%)", 10.0, 60.0, 35.0, 0.1)
+with col3:
+    water_content = st.slider("Water Content (%)", 30.0, 70.0, 50.0, 0.1)
+
+if st.button("💾 Save Entry"):
+    new_entry = pd.DataFrame([{
+        "Date": entry_date,
+        "Body Fat": body_fat,
+        "Muscle Mass": muscle_mass,
+        "Water Content": water_content
+    }])
+    comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
+    comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
+    save_body_composition(comp_df)
+    st.success("Entry saved successfully!")
 
 # ========== PIE CHART ==========
 if not comp_df.empty:
@@ -210,18 +211,9 @@ if len(comp_df) >= 1:
     bar_width = 0.25
 
     fig2, ax2 = plt.subplots()
-    bars1 = ax2.bar(x - bar_width, last_entries["Body Fat"], width=bar_width, label="Body Fat", color="#f4a261")
-    bars2 = ax2.bar(x, last_entries["Muscle Mass"], width=bar_width, label="Muscle Mass", color="#2a9d8f")
-    bars3 = ax2.bar(x + bar_width, last_entries["Water Content"], width=bar_width, label="Water Content", color="#264653")
-
-    for bars in [bars1, bars2, bars3]:
-        for bar in bars:
-            height = bar.get_height()
-            ax2.annotate(f'{height:.1f}%',
-                         xy=(bar.get_x() + bar.get_width() / 2, height),
-                         xytext=(0, 3),
-                         textcoords="offset points",
-                         ha='center', va='bottom', fontsize=8)
+    ax2.bar(x - bar_width, last_entries["Body Fat"], width=bar_width, label="Body Fat", color="#f4a261")
+    ax2.bar(x, last_entries["Muscle Mass"], width=bar_width, label="Muscle Mass", color="#2a9d8f")
+    ax2.bar(x + bar_width, last_entries["Water Content"], width=bar_width, label="Water Content", color="#264653")
 
     ax2.set_xlabel("Date")
     ax2.set_ylabel("Percentage")
@@ -235,43 +227,3 @@ if len(comp_df) >= 1:
 if not comp_df.empty:
     st.markdown("<h3 style='text-align: center;'>All Entries</h3>", unsafe_allow_html=True)
     st.dataframe(comp_df.sort_values("Date", ascending=False), use_container_width=True)
-
-    if len(comp_df) > 1:
-        st.markdown("<h3 style='text-align: center;'>Comparison to First Entry</h3>", unsafe_allow_html=True)
-        first = comp_df.sort_values("Date").iloc[0]
-        delta = latest[["Body Fat", "Muscle Mass", "Water Content"]] - first[["Body Fat", "Muscle Mass", "Water Content"]]
-        st.write("Change since first entry:")
-        st.write(delta.to_frame(name="Change (%)").T)
-
-# ========== MANUAL COMPARISON SECTION ==========
-with st.expander("📊 Compare Two Entries Manually"):
-    if len(comp_df) >= 2:
-        available_dates = comp_df["Date"].dt.strftime("%Y-%m-%d").tolist()
-        d1, d2 = st.selectbox("Select First Entry", available_dates), st.selectbox("Select Second Entry", available_dates, index=len(available_dates)-1)
-
-        compare_df = comp_df.copy()
-        compare_df["Date_str"] = compare_df["Date"].dt.strftime("%Y-%m-%d")
-
-        entry1 = compare_df[compare_df["Date_str"] == d1].iloc[0]
-        entry2 = compare_df[compare_df["Date_str"] == d2].iloc[0]
-
-        comp_vals = pd.DataFrame({
-            "Component": ["Body Fat", "Muscle Mass", "Water Content"],
-            d1: [entry1["Body Fat"], entry1["Muscle Mass"], entry1["Water Content"]],
-            d2: [entry2["Body Fat"], entry2["Muscle Mass"], entry2["Water Content"]]
-        })
-
-        st.dataframe(comp_vals.set_index("Component"))
-
-        fig_comp, ax = plt.subplots()
-        width = 0.35
-        x = np.arange(len(comp_vals))
-
-        ax.bar(x - width/2, comp_vals[d1], width=width, label=d1, color="#a3c4f3")
-        ax.bar(x + width/2, comp_vals[d2], width=width, label=d2, color="#90be6d")
-        ax.set_xticks(x)
-        ax.set_xticklabels(comp_vals["Component"])
-        ax.set_ylabel("Percentage")
-        ax.set_title("Comparison Between Selected Entries")
-        ax.legend()
-        st.pyplot(fig_comp)
