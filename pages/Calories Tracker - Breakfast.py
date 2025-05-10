@@ -31,12 +31,15 @@ with open("ressources/styles.css") as f:
 
 # -------------------- PAGE TITLE --------------------
 # Display the main title and subtitle of the page
-st.markdown('<p class="title">Breakfast Nutritional Tracker</p>', unsafe_allow_html=True)
+st.markdown('<p class="title">Breakfast Nutrition Tracker</p>', unsafe_allow_html=True)
 st.markdown(f'<div class="description">Enter a food item and its quantity to calculate your daily nutritional intake. Nutri Mentor analyzes calories, proteins, fats, and carbohydrates instantly, helping you make informed dietary choices every day.</p>', unsafe_allow_html=True)
 
 # -------------------- BUTTON TO GO BACK TO CALORIE TRACKER --------------------
 if st.button("Go Back to Calorie Tracker", key="go_back_button"):
     switch_page("Calories Tracker")
+
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
 # -------------------- CALENDAR  --------------------
 st.markdown("<div style='text-align: center;'><h2 class='subtitle'>📅 Select the Day for Your Breakfast's Entries</h2></div>", unsafe_allow_html=True)
@@ -135,8 +138,11 @@ if st.button("Add Food"):
 
                 st.success(f"Added {new_entry['recipe_title']} to {date_key}!")
 
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
+
 # -------------------- RESULTS SECTION --------------------
-st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍽️ Total Nutritional Values</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>📊 Total Nutritional Values</h2>", unsafe_allow_html=True)
 
 # Filter meals by the selected date
 meals_today = [m for m in st.session_state.saved_meals if m["selected_date"] == date_key and m["meal_category"] == "Breakfast"]
@@ -199,4 +205,25 @@ if meals_today:
         st.query_params.clear()
 else:
     st.info("No meals saved for this date.")
+
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
+
+# -------------------- NAVIGATION BUTTONS --------------------
+st.markdown("<h2 class='subtitle' style='text-align: center; color: green; margin-bottom: 10px;'>🍽️ Navigate to Other Meals</h2>", unsafe_allow_html=True)
+
+col1, col2, col3= st.columns(3)
+
+
+with col1:
+    if st.button("🥗 Lunch"):
+        st.switch_page("pages/Calories Tracker - Lunch.py")
+
+with col2:
+    if st.button("🍝 Dinner"):
+        st.switch_page("pages/Calories Tracker - Dinner.py")
+
+with col3:
+    if st.button("🍫 Snack"):
+        st.switch_page("pages/Calories Tracker - Snack.py")
 

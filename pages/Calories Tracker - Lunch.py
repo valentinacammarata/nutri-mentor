@@ -31,12 +31,15 @@ with open("ressources/styles.css") as f:
 
 # -------------------- PAGE TITLE --------------------
 # Display the main title and subtitle of the page
-st.markdown('<p class="title">Lunch Nutritional Tracker</p>', unsafe_allow_html=True)
+st.markdown('<p class="title">Lunch Nutrition Tracker</p>', unsafe_allow_html=True)
 st.markdown(f'<div class="description">Enter a food item and its quantity to calculate your daily nutritional intake. Nutri Mentor analyzes calories, proteins, fats, and carbohydrates instantly, helping you make informed dietary choices every day.</p>', unsafe_allow_html=True)
 
 
 if st.button("Go Back to Calorie Tracker", key="go_back_button"):
     switch_page("Calories Tracker")
+
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
 # -------------------- CALENDAR --------------------
 st.markdown("<div style='text-align: center;'><h2 class='subtitle'>📅 Select the Day for Your Lunch's Entries</h2></div>", unsafe_allow_html=True)
@@ -87,7 +90,7 @@ goals = {
 max_values = goals.get(user_goal, {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70})
 
 # -------------------- FOOD INPUT --------------------
-st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍎 Search for Food Items</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🥗 Search for Food Items</h2>", unsafe_allow_html=True)
 
 food_query = st.text_input("Search for a food", placeholder="E.g. Salad, Rice, Broccoli")
 quantity = st.number_input("Enter the consumed quantity (in grams or ml):", min_value=1, value=100, step=1)
@@ -135,8 +138,11 @@ if st.button("Add Food"):
 
                 st.success(f"Added {new_entry['recipe_title']} to {date_key}!")
 
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
+
 # -------------------- RESULTS SECTION --------------------
-st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍽️ Total Nutritional Values</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>📊 Total Nutritional Values</h2>", unsafe_allow_html=True)
 
 # Filter meals for the selected date
 meals_today = [m for m in st.session_state.saved_meals if m["selected_date"] == date_key and m["meal_category"] == "Lunch"]
@@ -201,3 +207,25 @@ if meals_today:
 else:
     st.info("No meals saved for this date.")
 
+
+
+# -------------------- LINE SEPARATOR --------------------
+st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
+
+
+# -------------------- NAVIGATION BUTTONS --------------------
+st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍽️ Navigate to Other Meals</h2>", unsafe_allow_html=True)
+
+col1, col2, col3= st.columns(3)
+
+with col1:
+    if st.button("☕ Breakfast"):
+        st.switch_page("pages/Calories Tracker - Breakfast.py")
+
+with col2:
+    if st.button("🍝 Dinner"):
+        st.switch_page("pages/Calories Tracker - Dinner.py")
+
+with col3:
+    if st.button("🍫 Snack"):
+        st.switch_page("pages/Calories Tracker - Snack.py")
