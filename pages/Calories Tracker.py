@@ -7,7 +7,7 @@ import json
 
 active_page = "Calories"
 
-# CSS für gleiches Button-Styling
+# CSS for consistent button styling
 st.markdown(f"""
     <style>
         .nav-container {{
@@ -33,7 +33,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# Navigation zentriert mit switch_page
+# Centered navigation with switch_page
 st.markdown('<div class="nav-container">', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 
@@ -99,7 +99,7 @@ st.markdown("""<div style="text-align: center; margin-top: 25px;">
 """, unsafe_allow_html=True)
 
 # -------------------- SWITCH TO RECIPES GENERATOR --------------------
-    # Add a button to navigate to the recipes generator page
+    #  button to navigate to the recipes generator page
 if st.button("🍳 Go to Recipes Generator"):
     switch_page("Recipes Generator")
 
@@ -107,23 +107,8 @@ if st.button("🍳 Go to Recipes Generator"):
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
 
 # -------------------- DASHBOARD --------------------
-if "selected_day" in st.session_state:
-    selected_day = st.session_state.selected_day
-    selected_date = datetime.datetime(
-        st.session_state.calendar_year,
-        st.session_state.calendar_month,
-        selected_day
-    ).strftime("%A, %d %B %Y")
-    st.markdown(f"""
-        <div class='title'><em>Today's Overview</em></div>
-        <div class='subtitle'><em>{selected_date}</em></div>
-    """, unsafe_allow_html=True)
-else:
-    today = datetime.datetime.now().strftime("%A, %d %B %Y")
-    st.markdown(f"""
-        <div class='title'><em>Today's Overview</em></div>
-        <div class='subtitle'><em>{today}</em></div>
-    """, unsafe_allow_html=True)
+st.markdown('<p class="title">Your Daily Nutrition Overview</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="description">Review how your daily nutrient intake compares with your personalized dietary targets, helping you stay aligned with your health and wellness objectives</p>', unsafe_allow_html=True)
 
 # -------------------- TOTAL NUTRITIONAL INFORMATION --------------------
 # Load recipes from calendar_recipes.json
@@ -305,10 +290,8 @@ st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
 
 # -------------------- CALENDAR --------------------
 # Display the calendar section
-st.markdown("""
-    <div class='title'><em>Calendar</em></div>
-    <div class='subtitle'><em>Click the day to add your entries manually</em></div>
-""", unsafe_allow_html=True)
+st.markdown('<p class="title">Daily Meal Tracker Calendar</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="description">Select any date to explore what you ate and added that day</p>', unsafe_allow_html=True)
 
 # Variables for the month and year
 if "calendar_year" not in st.session_state:

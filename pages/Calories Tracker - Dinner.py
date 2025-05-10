@@ -29,17 +29,11 @@ if "saved_meals" not in st.session_state:
 with open("ressources/styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# -------------------- TITLE OF THE PAGE --------------------
-st.markdown("""
-    <div class="title-container">
-        <h1 class="title">Dinner Nutritional Tracker</h1>
-        <p class="subtitle" style="font-style: italic;">
-            Enter a food item and its quantity to calculate your daily nutritional intake. 
-            <strong>Nutri Mentor</strong> analyzes calories, proteins, fats, and carbohydrates instantly, 
-            helping you make informed dietary choices every day.
-        </p>
-    </div>
-""", unsafe_allow_html=True)
+# -------------------- PAGE TITLE --------------------
+# Display the main title and subtitle of the page
+st.markdown('<p class="title">Dinner Nutritional Tracker</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="description">Enter a food item and its quantity to calculate your daily nutritional intake. Nutri Mentor analyzes calories, proteins, fats, and carbohydrates instantly, helping you make informed dietary choices every day.</p>', unsafe_allow_html=True)
+
 
 if st.button("Go Back to Calorie Tracker", key="go_back_button"):
     switch_page("Calories Tracker")
