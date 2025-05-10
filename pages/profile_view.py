@@ -2,9 +2,46 @@ import streamlit as st
 import datetime
 import json
 import os
-
-# Seitenkonfiguration
+# === Seitenkonfiguration muss als Erstes kommen ===
 st.set_page_config(page_title="Your Profile", layout="centered")
+
+active_page = "Profile"  # Aktive Seite für die Navigation
+
+st.markdown(f"""
+    <style>
+        .nav-wrapper {{
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }}
+        .nav-button {{
+            background-color: #388e3c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Segoe UI', sans-serif;
+            border: 2px solid transparent;
+        }}
+        .nav-button:hover {{
+            background-color: #2e7d32;
+        }}
+        .nav-button.active {{
+            background-color: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }}
+    </style>
+
+    <div class="nav-wrapper">
+        <a href="/pages/profile_view" class="nav-button {'active' if active_page == 'Profile' else ''}">👤 Profile</a>
+        <a href="/pages/data_visualization" class="nav-button {'active' if active_page == 'Visual Data' else ''}">📊 Visual Data</a>
+        <a href="/pages/Recipes Generator" class="nav-button {'active' if active_page == 'Recipes' else ''}">🥗 Recipes</a>
+        <a href="/pages/Calories Tracker" class="nav-button {'active' if active_page == 'Calories' else ''}">📒 Calories</a>
+    </div>
+""", unsafe_allow_html=True)
 
 # Stildefinitionen
 st.markdown("""
