@@ -5,6 +5,7 @@ import json
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.ensemble import RandomForestRegressor  #für Machine Learning
 
 active_page = "Data Visualization"  # Aktive Seite für die Navigation
 
@@ -186,6 +187,7 @@ for i in range(st.session_state.weight_rows):
 
 if st.button("➕ Add another row"):
     st.session_state.weight_rows += 1
+    st.rerun()
 
 if st.button("📄 Save All"):
     if weight_data:
@@ -199,6 +201,7 @@ if st.button("📄 Save All"):
         st.warning("Please enter at least one weight.")
 
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+
 # Visualization
 st.markdown("""
     <h2 style='text-align: center;'>📊 Show Progress</h2>
@@ -209,10 +212,76 @@ if not df.empty:
     df = df.sort_values("Date")
     st.subheader("📈 Weight Over Time")
     st.line_chart(df.set_index("Date")["Weight"])
-    st.subheader("📋 Table")
-    st.dataframe(df, use_container_width=True)
-else:
-    st.info("No data available yet. Enter something to get started.")
+
+st.markdown("<div style='margin-top: 60px;'></div>", unsafe_allow_html=True)
+    # === MACHINE LEARNING VORHERSAGE: GEWICHTSPROGNOSE FÜR 30 TAGE ===
+if len(df) >= 5:
+            st.subheader("🤖 Weight Forecast - Machine Learning !")
+            st.markdown("""
+            <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
+            This section leverages a machine learning model, specifically a Random Forest Regressor, to forecast your weight for the upcoming days based on your recent data entries.<br>
+            The Random Forest algorithm is an ensemble learning method that builds multiple decision trees during training and merges their outputs to improve accuracy and reduce overfitting.<br>
+            In this implementation, the model uses the last three recorded weights and their average as input features to predict future values. The more historical data you provide, the better the model can learn patterns and trends, resulting in more reliable predictions.<br>
+            Use this tool to gain insights into your weight trajectory and make informed decisions about your fitness journey.
+            </p>
+            """, unsafe_allow_html=True)
+            forecast_days = st.slider("Forecast range (days)", min_value=7, max_value=30, value=30, step=1)
+            
+            df_ml = df.copy()
+            df_ml["Weight_lag1"] = df_ml["Weight"].shift(1)
+            df_ml["Weight_lag2"] = df_ml["Weight"].shift(2)
+            df_ml["Weight_lag3"] = df_ml["Weight"].shift(3)
+            df_ml["Weight_avg"] = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3"]].mean(axis=1)
+            df_ml = df_ml.dropna()
+
+            X = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3", "Weight_avg"]]
+            y = df_ml["Weight"]
+
+            model = RandomForestRegressor(n_estimators=100, random_state=42)
+            model.fit(X, y)
+
+            # forecast_days = 30  # ❌ entfernen – wird nun dynamisch durch Slider gesetzt
+            last_known_w1 = df["Weight"].iloc[-1]
+            last_known_w2 = df["Weight"].iloc[-2] if len(df) >= 2 else last_known_w1
+            last_known_w3 = df["Weight"].iloc[-3] if len(df) >= 3 else last_known_w2
+            predictions = []
+
+            for _ in range(forecast_days):
+                # Fortschreibung aus letzter Iteration (nicht aus df!)
+                avg = np.mean([last_known_w1, last_known_w2, last_known_w3])
+                features = [[last_known_w1, last_known_w2, last_known_w3, avg]]
+                next_pred = model.predict(features)[0]
+                predictions.append(next_pred)
+                last_known_w3, last_known_w2, last_known_w1 = last_known_w2, last_known_w1, next_pred  # richtig fortschreiben
+
+            max_date = pd.to_datetime(df["Date"].max(), errors="coerce")
+            if pd.notna(max_date):
+                future_dates = pd.date_range(pd.to_datetime(max_date) + pd.Timedelta(days=1), periods=forecast_days)
+                forecast_df = pd.DataFrame({"Date": pd.to_datetime(future_dates), "Predicted Weight": predictions})
+
+                st.markdown(f"📅 **{forecast_days}-Day Weight Forecast**")
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.plot(df["Date"], df["Weight"], label="Actual Weight", marker='o')
+                forecast_df_sorted = forecast_df.sort_values("Date")
+                ax.plot(pd.to_datetime(forecast_df_sorted["Date"]), forecast_df_sorted["Predicted Weight"], label="Forecast", linestyle='--', marker='x', color='orange')
+                ax.set_xlabel("Date")
+                ax.set_ylabel("Weight (kg)")
+                ax.set_title(f"Weight Forecast (Next {forecast_days} Days)")
+                ax.legend()
+                ax.grid(True)
+                st.pyplot(fig)
+
+                if len(df) < 30:
+                    st.info("ℹ️ Your prediction may be unstable. For more accurate forecasts, it's recommended to have at least 30 data entries.")
+
+                # ✅ Forecast-Tabelle direkt unter der Grafik anzeigen
+                
+
+                with st.expander("🔍 Show forecasted values"):
+                    st.dataframe(forecast_df, use_container_width=True)
+            else:
+                st.warning("❗ Date column is missing or invalid, forecast could not be generated.")
+
 # ================= ADVANCED BODY COMPOSITION SECTION =================
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
