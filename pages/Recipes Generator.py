@@ -109,7 +109,7 @@ def get_recipes(diet, goal, cuisine, dish_type, test_mode=False):
         }
         goal_calories = calorie_ranges.get(goal, "calories=2000")  # Default to 2000 kcal
 
-        url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=healthiness&number=5&addRecipeInformation=true&apiKey={API_KEY_SPOONACULAR}"
+        url = f"https://api.spoonacular.com/recipes/complexSearch?diet={diet}&{goal_calories}&cuisine={cuisine}&type={dish_type}&sort=healthiness&number=15&addRecipeInformation=true&apiKey={API_KEY_SPOONACULAR}"
         response = requests.get(url)
 
         if response.status_code == 200:
