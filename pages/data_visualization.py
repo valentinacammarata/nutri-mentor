@@ -3,6 +3,8 @@ import pandas as pd
 from datetime import datetime
 import json
 import os
+import matplotlib.pyplot as plt
+import numpy as np
 
 # === TITLE SECTION (ohne Emoji, einheitlich gestylt) ===
 st.markdown("""
@@ -37,13 +39,40 @@ def set_background_color(color):
 set_background_color("#d4f4dd")  # Light green background
 
 # File paths
-DATA_FILE = "weight_data.csv"
-PROFILE_FILE = "profile_data.json"
-BODY_COMP_FILE = "body_composition.json"
+DATA_FILE = "ressources/weight_data.csv"
+PROFILE_FILE = "ressources/profile_data.json"
+BODY_COMP_FILE = "ressources/body_composition.json"
 
-st.markdown("<div style='margin-top: 70px;'></div>", unsafe_allow_html=True)
+# === PROFILE IMPORT BLOCK (immer importieren) ===
+imported_msg = None  # Zum Anzeigen oben
+
+if os.path.exists(PROFILE_FILE):
+    with open(PROFILE_FILE, "r") as f:
+        profile = json.load(f)
+
+    if "weight" in profile and "date" in profile:
+        init_entry = pd.DataFrame([{
+            "Date": profile["date"],
+            "Weight": profile["weight"]
+        }])
+
+        if os.path.exists(DATA_FILE):
+            df_existing = pd.read_csv(DATA_FILE)
+            df_combined = pd.concat([init_entry, df_existing], ignore_index=True)
+            df_combined = df_combined.drop_duplicates(subset=["Date"], keep="first")
+            df_combined.to_csv(DATA_FILE, index=False)
+        else:
+            init_entry.to_csv(DATA_FILE, index=False)
+
+        imported_msg = f"✅ Initial weight ({profile['weight']} kg on {profile['date']}) imported from profile!"
+
+# Erfolgsmeldung anzeigen, wenn Daten importiert wurden
+if imported_msg:
+    st.success(imported_msg)
+
 # Title for Enter Weights
 st.markdown("""
+    <div style='margin-top: 70px;'></div>
     <h2 style='text-align: center;'>📥 Enter Weights</h2>
     <p style='text-align: center;'>Log your weight to track your progress over time.</p>
 """, unsafe_allow_html=True)
@@ -63,23 +92,12 @@ def save_body_composition(df):
 
 def load_body_composition():
     try:
-        return pd.read_json(BODY_COMP_FILE)
-    except FileNotFoundError:
+        df = pd.read_json(BODY_COMP_FILE)
+        if df.empty or not all(col in df.columns for col in ["Date", "Body Fat", "Muscle Mass", "Water Content"]):
+            return pd.DataFrame(columns=["Date", "Body Fat", "Muscle Mass", "Water Content"])
+        return df
+    except Exception:
         return pd.DataFrame(columns=["Date", "Body Fat", "Muscle Mass", "Water Content"])
-
-# Import profile data once if weight file is missing or empty
-if os.path.exists(PROFILE_FILE):
-    if not os.path.exists(DATA_FILE) or os.path.getsize(DATA_FILE) == 0:
-        with open(PROFILE_FILE, "r") as f:
-            profile = json.load(f)
-            if "weight" in profile and "date" in profile:
-                init_entry = pd.DataFrame([{
-                    "Date": profile["date"],
-                    "Weight": profile["weight"]
-                }])
-                save_data(init_entry)
-                st.success(f"Initial weight ({profile['weight']} kg on {profile['date']}) imported!")
-
 
 # Dynamic weight input
 if "weight_rows" not in st.session_state:
@@ -98,7 +116,7 @@ for i in range(st.session_state.weight_rows):
 if st.button("➕ Add another row"):
     st.session_state.weight_rows += 1
 
-if st.button("💾 Save All"):
+if st.button("📄 Save All"):
     if weight_data:
         df = load_data()
         new_entries = pd.DataFrame(weight_data)
@@ -109,7 +127,6 @@ if st.button("💾 Save All"):
     else:
         st.warning("Please enter at least one weight.")
 
-
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 # Visualization
 st.markdown("""
@@ -118,11 +135,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 df = load_data()
 if not df.empty:
-    time_range = st.selectbox("Select Time Range", ["All", "Last 7 Days", "Last 30 Days"])
-    if time_range == "Last 7 Days":
-        df = df[pd.Timestamp(df["Date"]) >= pd.Timestamp.today() - pd.Timedelta(days=7)]
-    elif time_range == "Last 30 Days":
-        df = df[df["Date"] >= pd.Timestamp.today() - pd.Timedelta(days=30)]
     df = df.sort_values("Date")
     st.subheader("📈 Weight Over Time")
     st.line_chart(df.set_index("Date")["Weight"])
@@ -130,51 +142,32 @@ if not df.empty:
     st.dataframe(df, use_container_width=True)
 else:
     st.info("No data available yet. Enter something to get started.")
-
-# ================= NEW ADVANCED BODY COMPOSITION SECTION =================
-import matplotlib.pyplot as plt
-import numpy as np
-
-BODY_COMP_FILE = "body_composition.json"
-
+# ================= ADVANCED BODY COMPOSITION SECTION =================
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
     <h1 style='text-align: center;'>Advanced Body Composition Tracking</h1>
     <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
-        Track your body composition step by step. Enter your values for Body Fat, Muscle Mass, and Water Content below.
+        Start by entering a single body composition entry. Below, you can add more entries and compare them visually. 
     </p>
 """, unsafe_allow_html=True)
 
-# Load/save helpers
-def load_body_composition():
-    try:
-        if os.path.exists(BODY_COMP_FILE) and os.path.getsize(BODY_COMP_FILE) > 0:
-            return pd.read_json(BODY_COMP_FILE)
-        else:
-            return pd.DataFrame(columns=["Date", "Body Fat", "Muscle Mass", "Water Content"])
-    except Exception:
-        return pd.DataFrame(columns=["Date", "Body Fat", "Muscle Mass", "Water Content"])
-
-def save_body_composition(df):
-    df.to_json(BODY_COMP_FILE, orient="records")
-
 # Load data
 comp_df = load_body_composition()
+comp_df["Date"] = pd.to_datetime(comp_df["Date"], errors="coerce")  # ✅ NEU: zur Sicherheit
 
-# Input section (combined entry)
-st.subheader("➕ New Body Composition Entry")
-
-entry_date = st.date_input("📅 Date", datetime.today())
+# === EINZELNE ERSTEINGABE MIT SOFORTIGEM DIAGRAMM ===
+st.subheader("📥 First Entry or Today's Body Composition")
+entry_date = st.date_input("🗓️ Date", datetime.today(), key="main_entry_date")
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    body_fat = st.slider("Body Fat (%)", 5.0, 50.0, 20.0, 0.1)
+    body_fat = st.slider("Body Fat (%)", 5.0, 50.0, 20.0, 0.1, key="main_bf")
 with col2:
-    muscle_mass = st.slider("Muscle Mass (%)", 10.0, 60.0, 35.0, 0.1)
+    muscle_mass = st.slider("Muscle Mass (%)", 10.0, 60.0, 35.0, 0.1, key="main_mm")
 with col3:
-    water_content = st.slider("Water Content (%)", 30.0, 70.0, 50.0, 0.1)
+    water_content = st.slider("Water Content (%)", 30.0, 70.0, 50.0, 0.1, key="main_wc")
 
-if st.button("💾 Save Entry"):
+if st.button("📄 Save Today's Entry", key="main_save_btn"):
     new_entry = pd.DataFrame([{
         "Date": entry_date,
         "Body Fat": body_fat,
@@ -184,11 +177,10 @@ if st.button("💾 Save Entry"):
     comp_df = pd.concat([comp_df, new_entry], ignore_index=True)
     comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
     save_body_composition(comp_df)
-    st.success("Entry saved successfully!")
+    st.success("Today's entry saved successfully!")
 
-# ========== PIE CHART ==========
-if not comp_df.empty:
-    latest = comp_df.sort_values("Date").iloc[-1]
+    # === Direkte Visualisierung: Kreis- und Balkendiagramm ===
+    latest = new_entry.iloc[0]
     bf, mm, wc = latest["Body Fat"], latest["Muscle Mass"], latest["Water Content"]
     other = max(0, 100 - (bf + mm + wc))
 
@@ -196,15 +188,57 @@ if not comp_df.empty:
     values = [bf, mm, wc, other]
     colors = ['#f4a261', '#2a9d8f', '#264653', '#cccccc']
 
-    st.markdown("<h3 style='text-align: center;'>Body Composition Pie Chart</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>🧭 Composition Breakdown</h3>", unsafe_allow_html=True)
     fig1, ax1 = plt.subplots()
     ax1.pie(values, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
     ax1.axis("equal")
     st.pyplot(fig1)
 
-# ========== BAR CHART ==========
-if len(comp_df) >= 1:
-    st.markdown("<h3 style='text-align: center;'>Recent Entries Overview</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>📊 Single Entry Overview</h3>", unsafe_allow_html=True)
+    fig_bar, ax_bar = plt.subplots()
+    categories = ['Body Fat', 'Muscle Mass', 'Water Content']
+    values = [bf, mm, wc]
+    ax_bar.bar(categories, values, color=colors[:3])
+    ax_bar.set_ylabel("Percentage")
+    st.pyplot(fig_bar)
+
+# === MEHRERE EINTRÄGE MÖGLICH NACH DER ERSTEN EINGABE ===
+st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+st.markdown("""
+    <h2 style='text-align: center;'>➕ Add More Entries</h2>
+    <p style='text-align: center;'>Track additional progress over time.</p>
+""", unsafe_allow_html=True)
+
+new_date = st.date_input("📅 Date", datetime.today(), key="extra_date")
+col1, col2, col3 = st.columns(3)
+with col1:
+    new_bf = st.slider("Body Fat (%)", 5.0, 50.0, 20.0, 0.1, key="extra_bf")
+with col2:
+    new_mm = st.slider("Muscle Mass (%)", 10.0, 60.0, 35.0, 0.1, key="extra_mm")
+with col3:
+    new_wc = st.slider("Water Content (%)", 30.0, 70.0, 50.0, 0.1, key="extra_wc")
+
+if st.button("💾 Save Additional Entry"):
+    extra_entry = pd.DataFrame([{
+        "Date": new_date,
+        "Body Fat": new_bf,
+        "Muscle Mass": new_mm,
+        "Water Content": new_wc
+    }])
+    comp_df = pd.concat([comp_df, extra_entry], ignore_index=True)
+    comp_df = comp_df.drop_duplicates(subset=["Date"], keep="last")
+    save_body_composition(comp_df)
+    st.success("Additional entry saved!")
+
+# === VERGLEICH NUR WENN MEHR ALS 1 EINTRAG VORHANDEN IST ===
+if len(comp_df) > 1:
+    comp_df["Date"] = pd.to_datetime(comp_df["Date"], errors="coerce")  # ✅ NEU: vor Sortierung
+    st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+    st.markdown("""
+        <h2 style='text-align: center;'>📈 Compare Recent Entries</h2>
+        <p style='text-align: center;'>Automatic comparison of your latest entries.</p>
+    """, unsafe_allow_html=True)
+
     last_entries = comp_df.sort_values("Date").tail(3)
     dates = last_entries["Date"].astype(str).tolist()
     x = np.arange(len(dates))
@@ -223,7 +257,27 @@ if len(comp_df) >= 1:
     ax2.legend()
     st.pyplot(fig2)
 
-# ========== TABLE ==========
-if not comp_df.empty:
-    st.markdown("<h3 style='text-align: center;'>All Entries</h3>", unsafe_allow_html=True)
-    st.dataframe(comp_df.sort_values("Date", ascending=False), use_container_width=True)
+# === MANUELLER VERGLEICH AB 2 EINTRÄGEN ===
+if len(comp_df) >= 2:
+    comp_df["Date"] = pd.to_datetime(comp_df["Date"], errors="coerce")  # ✅ NEU: vor Auswahl
+    st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+    st.markdown("""
+        <h2 style='text-align: center;'>🔍 Manual Comparison</h2>
+        <p style='text-align: center;'>Select two dates to compare them directly.</p>
+    """, unsafe_allow_html=True)
+
+    dates = comp_df["Date"].dropna().sort_values().unique()
+    compare_date_1 = st.selectbox("Select first date", dates, key="comp1")
+    compare_date_2 = st.selectbox("Select second date", dates, key="comp2")
+
+    if compare_date_1 != compare_date_2:
+        entry1 = comp_df[comp_df["Date"] == compare_date_1].iloc[0]
+        entry2 = comp_df[comp_df["Date"] == compare_date_2].iloc[0]
+
+        comparison_df = pd.DataFrame({
+            "Category": ["Body Fat", "Muscle Mass", "Water Content"],
+            str(compare_date_1): [entry1["Body Fat"], entry1["Muscle Mass"], entry1["Water Content"]],
+            str(compare_date_2): [entry2["Body Fat"], entry2["Muscle Mass"], entry2["Water Content"]]
+        })
+
+        st.dataframe(comparison_df, use_container_width=True)

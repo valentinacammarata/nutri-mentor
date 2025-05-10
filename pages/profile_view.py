@@ -61,6 +61,7 @@ else:
 
 
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+
 # Profilübersicht
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 st.markdown("<h2 class='section-title'>👤 Profile Overview</h2>", unsafe_allow_html=True)
@@ -79,6 +80,7 @@ with st.container():
 
 
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+
 # Gewichtstracker
 st.markdown("<h2 class='section-title'>🏋️ Weight Tracker</h2>", unsafe_allow_html=True)
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
