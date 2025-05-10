@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 
-# -------------------- CONFIGURAZIONE FILE JSON --------------------
+# -------------------- CONFIGURATION OF JSON --------------------
 calendar_recipes_path = "ressources/calendar_recipes.json"
 
 def load_calendar_recipes():
@@ -21,21 +21,21 @@ def save_calendar_recipes(data):
     with open(calendar_recipes_path, "w") as f:
         json.dump(data, f, indent=4)
 
-# Inizializza lo stato globale
+# Initialize global state
 if "saved_meals" not in st.session_state:
     st.session_state.saved_meals = load_calendar_recipes()
 
-# -------------------- STILI CSS --------------------
+# -------------------- STYLES CSS --------------------
 with open("ressources/styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# -------------------- TITOLO --------------------
+# -------------------- TITLE OF THE PAGE --------------------
 st.markdown("""
     <div class="title-container">
         <h1 class="title">Dinner Nutritional Tracker</h1>
         <p class="subtitle" style="font-style: italic;">
             Enter a food item and its quantity to calculate your daily nutritional intake. 
-            <strong>NutriMentor</strong> analyzes calories, proteins, fats, and carbohydrates instantly, 
+            <strong>Nutri Mentor</strong> analyzes calories, proteins, fats, and carbohydrates instantly, 
             helping you make informed dietary choices every day.
         </p>
     </div>
@@ -44,12 +44,12 @@ st.markdown("""
 if st.button("Go Back to Calorie Tracker", key="go_back_button"):
     switch_page("Calories Tracker")
 
-# -------------------- DATA --------------------
+# -------------------- CALENDAR --------------------
 st.markdown("<div style='text-align: center;'><h2 class='subtitle'>📅 Select the Day for Your Dinner's Entries</h2></div>", unsafe_allow_html=True)
 selected_date = st.date_input("Select a date for your meal:", value=date.today(), min_value=date(2000, 1, 1), max_value=date(2100, 12, 31))
 date_key = selected_date.strftime("%Y-%m-%d")
 
-# -------------------- API USDA --------------------
+# -------------------- USDA API --------------------
 API_KEY = os.getenv("API_KEY_USDA")
 
 def fetch_food_data(query):
@@ -65,8 +65,34 @@ def fetch_food_data(query):
     else:
         st.error("Error fetching data from USDA API.")
         return None
-    
-# -------------------- INPUT ALIMENTO --------------------
+
+# -------------------- LOAD USER PREFERENCES --------------------
+def load_user_preferences():
+    try:
+        with open("ressources/profile_data.json", "r") as f:
+            data = json.load(f)
+            goals = data.get("goals", [])
+            goal = goals[0] if goals else "just eat Healthier :)"
+            diet = data.get("diet", "No Preference")
+            return {"goal": goal, "diet": diet}
+    except FileNotFoundError:
+        return {"goal": "just eat Healthier :)", "diet": "No Preference"}
+
+# Get user preferences
+user_prefs = load_user_preferences()
+user_goal = user_prefs.get("goal", "just eat Healthier :)")  # Default to "just eat Healthier :)"
+
+# Define maximum values for each goal
+goals = {
+    "Build Muscle": {"calories": 2700, "protein": 180, "carbs": 350, "fat": 80},
+    "Lose Weight": {"calories": 1700, "protein": 135, "carbs": 300, "fat": 40},
+    "just eat Healthier :)": {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70},
+}
+
+# Get max values for the user's goal
+max_values = goals.get(user_goal, {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70})
+
+# -------------------- FOOD INPUT --------------------
 st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍎 Search for Food Items</h2>", unsafe_allow_html=True)
 
 food_query = st.text_input("Search for a food", placeholder="E.g. Apple, Banana, Coffee")
@@ -75,7 +101,7 @@ quantity = st.number_input("Enter the consumed quantity (in grams or ml):", min_
 if "totals" not in st.session_state:
     st.session_state.totals = {"calories": 0, "protein": 0, "fat": 0, "carbs": 0}
 
-# -------------------- AGGIUNTA CIBO --------------------
+# -------------------- ADD FOOD BUTTON--------------------
 if st.button("Add Food"):
     if food_query:
         data = fetch_food_data(food_query)
@@ -88,13 +114,13 @@ if st.button("Add Food"):
                 fat = nutrients.get('Total lipid (fat)', 0) * (quantity / 100)
                 carbs = nutrients.get('Carbohydrate, by difference', 0) * (quantity / 100)
 
-                # Aggiorna i totali per la sessione
+                # Update totals for the session
                 st.session_state.totals["calories"] += calories
                 st.session_state.totals["protein"] += protein
                 st.session_state.totals["fat"] += fat
                 st.session_state.totals["carbs"] += carbs
 
-                # Crea il nuovo pasto
+                # Create the new meal
                 new_entry = {
                     "recipe_title": food.get('description').capitalize(),
                     "selected_date": date_key,
@@ -107,18 +133,18 @@ if st.button("Add Food"):
                     }
                 }
 
-                # Salva nella sessione
+                # Save in session
                 st.session_state.saved_meals.append(new_entry)
 
-                # Salva nel file JSON
+                # Save to JSON file
                 save_calendar_recipes(st.session_state.saved_meals)
 
                 st.success(f"Added {new_entry['recipe_title']} to {date_key}!")
 
-# -------------------- SEZIONE RISULTATI --------------------
+# -------------------- RESULTS SECTION --------------------
 st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍽️ Total Nutritional Values</h2>", unsafe_allow_html=True)
 
-# Filtra i pasti per la data selezionata
+# Filter meals for the selected date
 meals_today = [m for m in st.session_state.saved_meals if m["selected_date"] == date_key and m["meal_category"] == "Dinner"]
 
 if meals_today:
@@ -128,31 +154,34 @@ if meals_today:
     selected_meal = next(m for m in meals_today if m["recipe_title"] == selected_meal_name)
     nutrition = selected_meal["nutrition"]
 
+    # Display nutritional information
     with st.expander("View Nutritional Information"):
         st.write(f"- **Calories**: {nutrition['calories']} kcal")
         st.write(f"- **Protein**: {nutrition['protein']} g")
         st.write(f"- **Fat**: {nutrition['fat']} g")
         st.write(f"- **Carbohydrates**: {nutrition['carbohydrates']} g")
 
+       # Display the nutritional values in a bar chart
     with st.expander("Show Total Nutritional Information"):
         total_calories = sum(m["nutrition"]["calories"] for m in meals_today)
         total_protein = sum(m["nutrition"]["protein"] for m in meals_today)
         total_fat = sum(m["nutrition"]["fat"] for m in meals_today)
         total_carbs = sum(m["nutrition"]["carbohydrates"] for m in meals_today)
 
+       # Display total nutritional information
         st.write("### Total Nutritional Information:")
         st.write(f"- **Total Calories**: {total_calories:.2f} kcal")
         st.write(f"- **Total Protein**: {total_protein:.2f} g")
         st.write(f"- **Total Fat**: {total_fat:.2f} g")
         st.write(f"- **Total Carbohydrates**: {total_carbs:.2f} g")
 
-        # Grafico barre
+        # Bar Chart for total nutritional values
         nutrients = ['Carbohydrates', 'Proteins', 'Fats']
         values = [total_carbs, total_protein, total_fat]
-        max_values = [240, 96, 64]
+        max_values_list = [max_values["carbs"], max_values["protein"], max_values["fat"]]
         colors = ["#4caf50", "#2196f3", "#ff9800"]
 
-        for nutrient, value, max_value, color in zip(nutrients, values, max_values, colors):
+        for nutrient, value, max_value, color in zip(nutrients, values, max_values_list, colors):
             bar_color = color if value <= max_value else "#ff5252"
             st.markdown(f"""
                 <div style="margin-bottom: 10px;">
@@ -164,16 +193,16 @@ if meals_today:
                 </div>
             """, unsafe_allow_html=True)
 
-    # Pulsante per eliminare i pasti del giorno
-    if st.button("🗑️ Elimina tutti i pasti della cena per questa data"):
+    # Button to delete all dinner meals for the selected date
+    if st.button("🗑️ Delete all dinner meals for this date"):
         st.session_state.saved_meals = [
             m for m in st.session_state.saved_meals
             if not (m["selected_date"] == date_key and m["meal_category"] == "Dinner")
         ]
         save_calendar_recipes(st.session_state.saved_meals)
-        st.success("Pasti eliminati!")
+        st.success("Meals deleted!")
 
-        # Simula un aggiornamento della pagina
+        # Simulate a page refresh
         st.query_params.clear()
 else:
     st.info("No meals saved for this date.")
