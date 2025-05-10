@@ -88,3 +88,244 @@ div.stButton > button:hover {
     margin: 8px 0;
 }
 
+/* Calories Tracker Styles */
+
+.dashboard-container {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+}
+
+.dashboard-container .subtitle {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.dashboard-container .circle-container {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(#4caf50 75%, #e0e0e0 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.dashboard-container .circle-container .circle-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.dashboard-container .circle-container .kcal-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.dashboard-container .stats-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.dashboard-container .stats-row .stats-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.dashboard-container .stats-row .label-text {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+.dashboard-container .progress-bar {
+    height: 8px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    margin-top: 5px;
+}
+
+.dashboard-container .progress-bar .progress {
+    height: 100%;
+    border-radius: 5px;
+    background-color: #4caf50;
+}
+
+.dashboard-container .dashboard-box {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-container .dashboard-box .dashboard-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.dashboard-container .dashboard-box .dashboard-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.dashboard-container .dashboard-box .dashboard-stats .stat-item {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.custom-scroll-button {
+    display: inline-block;
+    background-color: #3E8E41;
+    color: white;
+    padding: 12px 28px; /* Slightly increased padding for better appearance */
+    border-radius: 15px; /* Adjusted border radius for a smoother look */
+    font-size: 16px;
+    font-weight: bold; /* Made font weight bold for better emphasis */
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform transition */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added subtle shadow for depth */
+}
+
+.custom-scroll-button:hover {
+    background-color: #2e6f32;
+    transform: translateY(-2px); /* Added hover effect for a slight lift */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+/* Calories Tracker styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard-container {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+}
+
+.subtitle {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.circle-container {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(#4caf50 75%, #e0e0e0 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.circle-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.kcal-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.stats-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.label-text {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+.progress-bar {
+    height: 8px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    margin-top: 5px;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 5px;
+    background-color: #4caf50;
+}
+
+.dashboard-box {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.dashboard-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.stat-item {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.custom-scroll-button {
+    background-color: transparent;
+    color: #3E8E41;
+    font-size: 16px;
+    padding: 10px 24px;
+    border: 3px solid #3E8E41;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    margin: 0 auto;  
+}
+
+.custom-scroll-button:hover {
+    background-color: #3E8E41;
+    color: white;
+    border-color: #3E8E41;
+}
