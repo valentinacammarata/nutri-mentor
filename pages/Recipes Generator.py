@@ -69,68 +69,30 @@ with open("ressources/styles.css") as f:
 
 active_page = "Recipes"  # Set the active page to "Recipes"
 
-# -------------------- Custom CSS for navigation buttons -------------------------------------
-st.markdown(f"""
-    <style>
-        .nav-container {{
-            display: flex;
-            justify-content: center;
-            gap: 1.2rem;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }}
-        .stButton > button {{
-            background-color: #388e3c !important;
-            color: white !important;
-            font-weight: bold !important;
-            border-radius: 8px !important;
-            padding: 0.5rem 1.2rem !important;
-            border: none !important;
-        }}
-        .active-button > button {{
-            background-color: white !important;
-            color: #388e3c !important;
-            border: 2px solid #388e3c !important;
-        }}
-    </style>
-""", unsafe_allow_html=True)
-
 # ------------------- Navigation buttons for different sections ------------------------------
 st.markdown('<div class="nav-container">', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 
 with col1:
-    if active_page == "Profile":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("👤 Profile"):
         st.switch_page("pages/profile_view.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
-    if active_page == "Visual Data":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("📊 Visual Data"):
         st.switch_page("pages/data_visualization.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
-    if active_page == "Recipes":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("🥗 Recipes"):
         st.switch_page("pages/Recipes Generator.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col4:
-    if active_page == "Calories":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("📒 Calories"):
         st.switch_page("pages/Calories Tracker.py")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -449,12 +411,17 @@ display_calendar_recipes()
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Press the button below to save these recipes to your calendar!</p>', unsafe_allow_html=True)
 
+st.markdown('<div class="active-button">', unsafe_allow_html=True)
 if st.button("✅ Save my Recipes!"):
     save_to_file()
+st.markdown("</div>", unsafe_allow_html=True)
 
+st.markdown('<div class="active-button">', unsafe_allow_html=True)
 if st.button("🗑️ Reset Calendar"): 
     reset_calendar()
+st.markdown("</div>", unsafe_allow_html=True)
 
+st.markdown('<div class="active-button">', unsafe_allow_html=True)
 if st.button("📂 View Saved Recipes"):
     try:
         with open('ressources/calendar_recipes.json', 'r') as f:
@@ -472,9 +439,12 @@ if st.button("📂 View Saved Recipes"):
         st.warning("No saved recipes found.")
     except json.JSONDecodeError:
         st.error("Error reading the saved recipes file.")
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ------------------ Navigation button to Calories Tracker -----------------------------------
 st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nutrition based on your goal!</p>', unsafe_allow_html=True)
 
+st.markdown('<div class="active-button">', unsafe_allow_html=True)
 if st.button("📊 Go to Calories Tracker"):
     switch_page("Calories Tracker")
+st.markdown("</div>", unsafe_allow_html=True)
