@@ -8,77 +8,6 @@ import json
 import uuid # for generating unique IDs so that each recipe has a unique identifier and no conflicts occurr
 from streamlit_extras.switch_page_button import switch_page # for switching between pages
 
-
-active_page = "Recipes"  # Set the active page to "Recipes"
-
-# CSS für gleiches Button-Styling
-st.markdown(f"""
-    <style>
-        .nav-container {{
-            display: flex;
-            justify-content: center;
-            gap: 1.2rem;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }}
-        .stButton > button {{
-            background-color: #388e3c !important;
-            color: white !important;
-            font-weight: bold !important;
-            border-radius: 8px !important;
-            padding: 0.5rem 1.2rem !important;
-            border: none !important;
-        }}
-        .active-button > button {{
-            background-color: white !important;
-            color: #388e3c !important;
-            border: 2px solid #388e3c !important;
-        }}
-    </style>
-""", unsafe_allow_html=True)
-
-# Navigation zentriert mit switch_page
-st.markdown('<div class="nav-container">', unsafe_allow_html=True)
-col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
-
-with col1:
-    if active_page == "Profile":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
-    if st.button("👤 Profile"):
-        st.switch_page("pages/profile_view.py")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col2:
-    if active_page == "Visual Data":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
-    if st.button("📊 Visual Data"):
-        st.switch_page("pages/data_visualization.py")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col3:
-    if active_page == "Recipes":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
-    if st.button("🥗 Recipes"):
-        st.switch_page("pages/Recipes Generator.py")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col4:
-    if active_page == "Calories":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
-    if st.button("📒 Calories"):
-        st.switch_page("pages/Calories Tracker.py")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
 # -------------------- Initialize session state for recipes and calendar ----------------------
 if "recipes" not in st.session_state:
     st.session_state["recipes"] = []
@@ -137,6 +66,76 @@ test_mode = st.sidebar.checkbox("⚙️ Use Test Mode (Load Local JSON Data)", v
 # -------------------- Load the custom CSS for styling the app --------------------------------
 with open("ressources/styles.css") as f:       
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+active_page = "Recipes"  # Set the active page to "Recipes"
+
+# -------------------- Custom CSS for navigation buttons -------------------------------------
+st.markdown(f"""
+    <style>
+        .nav-container {{
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }}
+        .stButton > button {{
+            background-color: #388e3c !important;
+            color: white !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            padding: 0.5rem 1.2rem !important;
+            border: none !important;
+        }}
+        .active-button > button {{
+            background-color: white !important;
+            color: #388e3c !important;
+            border: 2px solid #388e3c !important;
+        }}
+    </style>
+""", unsafe_allow_html=True)
+
+# ------------------- Navigation buttons for different sections ------------------------------
+st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+
+with col1:
+    if active_page == "Profile":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("👤 Profile"):
+        st.switch_page("pages/profile_view.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    if active_page == "Visual Data":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("📊 Visual Data"):
+        st.switch_page("pages/data_visualization.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    if active_page == "Recipes":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("🥗 Recipes"):
+        st.switch_page("pages/Recipes Generator.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col4:
+    if active_page == "Calories":
+        st.markdown('<div class="active-button">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+    if st.button("📒 Calories"):
+        st.switch_page("pages/Calories Tracker.py")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ------------------- Display the title and welcome message -----------------------------------
 st.markdown('<p class="title">Discover Recipes Based on Your Preferences</p>', unsafe_allow_html=True)
@@ -212,6 +211,7 @@ def get_recipe_details(recipe_id, test_mode=False):
         response = requests.get(url)
         if handle_api_error(response):
             data = response.json()
+            st.write("API Response for Recipe Details:", data)  # Debugging output
             return data
         else:
             return {}
@@ -219,7 +219,7 @@ def get_recipe_details(recipe_id, test_mode=False):
 # ------------------ Display recipe details functions -----------------------------------------
 def display_recipe_details(details):
     with st.expander("📋 Recipe Details"):
-        diet_tags = details.get("dietTags", [])
+        diet_tags = details.get("diets", [])
         active_diets = diet_tags if diet_tags else []
 
         display_recipe_attributes(details, active_diets)
@@ -474,14 +474,8 @@ if st.button("📂 View Saved Recipes"):
     except json.JSONDecodeError:
         st.error("Error reading the saved recipes file.")
 
-# ------------------ Navigation buttons to other sections -----------------------------------
-st.markdown('<p class="subtitle">Navigate to other sections:</p>', unsafe_allow_html=True)
+# ------------------ Navigation button to Calories Tracker -----------------------------------
+st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nutrition information based on your goal!</p>', unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)      # Create two columns for buttons
-with col1:
-    if st.button("📊 Go to Calories Tracker"):
-        switch_page("Calories Tracker")
-
-with col2:
-    if st.button("👤 Go to Profile View"):
-        switch_page("profile_view")
+if st.button("📊 Go to Calories Tracker"):
+    switch_page("Calories Tracker")
