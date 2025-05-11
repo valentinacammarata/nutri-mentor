@@ -15,7 +15,7 @@ st.markdown(f"""
         .nav-container {{
             display: flex;
             justify-content: center;
-            gap: 1.2rem;
+            gap: 2rem; /* This defines the spacing between the buttons */
             margin-top: 1rem;
             margin-bottom: 1rem;
         }}
@@ -185,6 +185,14 @@ for i in range(st.session_state.weight_rows):
     if weight > 0:
         weight_data.append({"Date": date, "Weight": weight})
 
+# Add text below the weight input
+st.markdown("""
+    <p style='text-align: center; font-size: 1em; color: #2f5732;'>
+        Please ensure the weight and date are accurate before saving.<br>
+        ! The machine learning tool will be available once you have entered at least 3 weight entries !
+    </p>
+""", unsafe_allow_html=True)
+
 if st.button("➕ Add another row"):
     st.session_state.weight_rows += 1
     st.rerun()
@@ -216,13 +224,11 @@ if not df.empty:
 st.markdown("<div style='margin-top: 60px;'></div>", unsafe_allow_html=True)
     # === MACHINE LEARNING VORHERSAGE: GEWICHTSPROGNOSE FÜR 30 TAGE ===
 if len(df) >= 5:
-            st.subheader("🤖 Weight Forecast - Machine Learning !")
+            st.subheader("🤖 Weight Forecast")
             st.markdown("""
             <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
-            This section leverages a machine learning model, specifically a Random Forest Regressor, to forecast your weight for the upcoming days based on your recent data entries.<br>
-            The Random Forest algorithm is an ensemble learning method that builds multiple decision trees during training and merges their outputs to improve accuracy and reduce overfitting.<br>
-            In this implementation, the model uses the last three recorded weights and their average as input features to predict future values. The more historical data you provide, the better the model can learn patterns and trends, resulting in more reliable predictions.<br>
-            Use this tool to gain insights into your weight trajectory and make informed decisions about your fitness journey.
+            This section uses a machine learning model (Random Forest Regression) to forecast your weight for the next days based on your recent history.<br>
+            It uses the last 3 entries and their average as predictors. The more data you enter, the more accurate this prediction becomes.
             </p>
             """, unsafe_allow_html=True)
             forecast_days = st.slider("Forecast range (days)", min_value=7, max_value=30, value=30, step=1)
@@ -240,30 +246,27 @@ if len(df) >= 5:
             model = RandomForestRegressor(n_estimators=100, random_state=42)
             model.fit(X, y)
 
-            # forecast_days = 30  # ❌ entfernen – wird nun dynamisch durch Slider gesetzt
             last_known_w1 = df["Weight"].iloc[-1]
             last_known_w2 = df["Weight"].iloc[-2] if len(df) >= 2 else last_known_w1
             last_known_w3 = df["Weight"].iloc[-3] if len(df) >= 3 else last_known_w2
             predictions = []
 
             for _ in range(forecast_days):
-                # Fortschreibung aus letzter Iteration (nicht aus df!)
                 avg = np.mean([last_known_w1, last_known_w2, last_known_w3])
                 features = [[last_known_w1, last_known_w2, last_known_w3, avg]]
                 next_pred = model.predict(features)[0]
                 predictions.append(next_pred)
-                last_known_w3, last_known_w2, last_known_w1 = last_known_w2, last_known_w1, next_pred  # richtig fortschreiben
+                last_known_w3, last_known_w2, last_known_w1 = last_known_w2, last_known_w1, next_pred
 
             max_date = pd.to_datetime(df["Date"].max(), errors="coerce")
             if pd.notna(max_date):
                 future_dates = pd.date_range(pd.to_datetime(max_date) + pd.Timedelta(days=1), periods=forecast_days)
-                forecast_df = pd.DataFrame({"Date": pd.to_datetime(future_dates), "Predicted Weight": predictions})
+                forecast_df = pd.DataFrame({"Date": future_dates, "Predicted Weight": predictions})
 
                 st.markdown(f"📅 **{forecast_days}-Day Weight Forecast**")
                 fig, ax = plt.subplots(figsize=(10, 5))
-                ax.plot(df["Date"], df["Weight"], label="Actual Weight", marker='o')
-                forecast_df_sorted = forecast_df.sort_values("Date")
-                ax.plot(pd.to_datetime(forecast_df_sorted["Date"]), forecast_df_sorted["Predicted Weight"], label="Forecast", linestyle='--', marker='x', color='orange')
+                ax.plot(pd.to_datetime(df["Date"], errors="coerce"), df["Weight"], label="Actual Weight", marker='o')
+                ax.plot(pd.to_datetime(forecast_df["Date"], errors="coerce"), forecast_df["Predicted Weight"], label="Forecast", linestyle='--', marker='x', color='orange')
                 ax.set_xlabel("Date")
                 ax.set_ylabel("Weight (kg)")
                 ax.set_title(f"Weight Forecast (Next {forecast_days} Days)")
@@ -273,9 +276,6 @@ if len(df) >= 5:
 
                 if len(df) < 30:
                     st.info("ℹ️ Your prediction may be unstable. For more accurate forecasts, it's recommended to have at least 30 data entries.")
-
-                # ✅ Forecast-Tabelle direkt unter der Grafik anzeigen
-                
 
                 with st.expander("🔍 Show forecasted values"):
                     st.dataframe(forecast_df, use_container_width=True)
@@ -287,7 +287,12 @@ st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
     <h1 style='text-align: center;'>Advanced Body Composition Tracking</h1>
     <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
-        Start by entering a single body composition entry. Below, you can add more entries and compare them visually. 
+        This tool is designed for individuals who have access to advanced body composition scales or devices. <br>
+        These specialized scales provide detailed metrics such as body fat percentage, muscle mass, and water content, 
+        offering a comprehensive view of your physical health. By using this tool, you can log and visualize these metrics 
+        over time, enabling you to track progress, identify trends, and make informed decisions about your fitness and health journey. 
+        Whether you're an athlete, fitness enthusiast, or someone looking to improve their overall well-being, 
+        this tool empowers you to take control of your body composition data and achieve your goals.
     </p>
 """, unsafe_allow_html=True)
 
@@ -334,18 +339,36 @@ if st.button("📄 Save Today's Entry", key="main_save_btn"):
     ax1.axis("equal")
     st.pyplot(fig1)
 
+    st.markdown("""
+<p style='text-align: center; font-size: 0.95em; color: #444;'>
+<b>Other</b> represents the remaining components of your body not captured by fat, muscle, or water. 
+This may include bones, organs, and other tissues. If your input values do not add up to 100%, 
+"Other" fills in the difference to complete the total body composition.
+</p>
+""", unsafe_allow_html=True)
+
     st.markdown("<h3 style='text-align: center;'>📊 Single Entry Overview</h3>", unsafe_allow_html=True)
     fig_bar, ax_bar = plt.subplots()
     categories = ['Body Fat', 'Muscle Mass', 'Water Content']
     values = [bf, mm, wc]
-    ax_bar.bar(categories, values, color=colors[:3])
+    bars = ax_bar.bar(categories, values, color=colors[:3])
     ax_bar.set_ylabel("Percentage")
+
+    # Add value annotations on top of the bars
+    for bar in bars:
+        height = bar.get_height()
+        ax_bar.annotate(f'{height:.1f}%', 
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),  # Offset text by 3 points above the bar
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
     st.pyplot(fig_bar)
 
 # === MEHRERE EINTRÄGE MÖGLICH NACH DER ERSTEN EINGABE ===
 st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+st.subheader("📥 Add More Entries")
 st.markdown("""
-    <h2 style='text-align: center;'>➕ Add More Entries</h2>
     <p style='text-align: center;'>Track additional progress over time.</p>
 """, unsafe_allow_html=True)
 
@@ -385,9 +408,9 @@ if len(comp_df) > 1:
     bar_width = 0.25
 
     fig2, ax2 = plt.subplots()
-    ax2.bar(x - bar_width, last_entries["Body Fat"], width=bar_width, label="Body Fat", color="#f4a261")
-    ax2.bar(x, last_entries["Muscle Mass"], width=bar_width, label="Muscle Mass", color="#2a9d8f")
-    ax2.bar(x + bar_width, last_entries["Water Content"], width=bar_width, label="Water Content", color="#264653")
+    bars_bf = ax2.bar(x - bar_width, last_entries["Body Fat"], width=bar_width, label="Body Fat", color="#f4a261")
+    bars_mm = ax2.bar(x, last_entries["Muscle Mass"], width=bar_width, label="Muscle Mass", color="#2a9d8f")
+    bars_wc = ax2.bar(x + bar_width, last_entries["Water Content"], width=bar_width, label="Water Content", color="#264653")
 
     ax2.set_xlabel("Date")
     ax2.set_ylabel("Percentage")
@@ -395,6 +418,17 @@ if len(comp_df) > 1:
     ax2.set_xticks(x)
     ax2.set_xticklabels(dates)
     ax2.legend()
+
+    # Add value annotations on top of the bars
+    for bars in [bars_bf, bars_mm, bars_wc]:
+        for bar in bars:
+            height = bar.get_height()
+            ax2.annotate(f'{height:.1f}%', 
+                         xy=(bar.get_x() + bar.get_width() / 2, height),
+                         xytext=(0, 3),  # Offset text by 3 points above the bar
+                         textcoords="offset points",
+                         ha='center', va='bottom')
+
     st.pyplot(fig2)
 
 # === MANUELLER VERGLEICH AB 2 EINTRÄGEN ===
