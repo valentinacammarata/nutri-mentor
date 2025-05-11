@@ -1,6 +1,6 @@
-# Nutri-Mentor
+# Nutri Mentor
 
-Nutri-Mentor is a comprehensive nutritional tracking application designed to help users manage their dietary habits, track their caloric intake, and achieve their health goals. The app provides an intuitive interface for logging meals, viewing nutritional information, and analyzing progress toward personalized goals.
+Nutri Mentor is a comprehensive nutritional tracking application designed to help users manage their dietary habits, track their caloric intake, and achieve their health goals. The app provides an intuitive interface for logging meals, viewing nutritional information, and analyzing progress toward personalized goals.
 
 ---
 
@@ -181,7 +181,7 @@ Update the application's configuration file or environment variables with these 
 
 ## Installed Packages
 
-To run Nutri-Mentor, ensure the following Python packages are installed:
+To run Nutri Mentor, ensure the following Python packages are installed:
 
 - **streamlit**
 - **pandas**
@@ -195,4 +195,4 @@ Install them using:
 pip install streamlit pandas numpy matplotlib requests streamlit-extras
 ```
 
-Start your journey toward better health with Nutri-Mentor today!
+Start your journey toward better health with Nutri Mentor today!
