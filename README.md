@@ -58,7 +58,7 @@ Nutri Mentor is a comprehensive nutritional tracking application designed to hel
 - Recipes are accessible through dedicated pages for each meal type (Breakfast, Lunch, Dinner, Snack).
 
 ### 9. **Machine Learning Integration**
-- Nutri-Mentor leverages machine learning to provide personalized insights and recommendations:
+- Nutri Mentor leverages machine learning to provide personalized insights and recommendations:
    - **Meal Suggestions**: Based on user preferences, past meal logs, and health goals, the app suggests meals that align with dietary targets.
    - **Nutritional Predictions**: Predicts potential deficiencies or excesses in the user's diet based on historical data.
    - **Goal Optimization**: Continuously adjusts recommendations to help users achieve their health goals more effectively.
