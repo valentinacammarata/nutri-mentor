@@ -189,6 +189,8 @@ To run Nutri Mentor, ensure the following Python packages are installed:
 - **matplotlib**
 - **requests**
 - **datetime**
+- **streamlit-multipage**: For switching between different pages in the app.
+- **scikit-learn**: For implementing machine learning models.
 
 Install them using:
 ```bash
