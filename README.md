@@ -127,4 +127,23 @@ Nutri-Mentor is a comprehensive nutritional tracking application designed to hel
 
 ---
 
+## Installed Packages
+
+To run Nutri-Mentor, ensure the following Python packages are installed:
+
+- **streamlit**: For building the interactive web application.
+- **pandas**: For data manipulation and analysis.
+- **numpy**: For numerical computations.
+- **matplotlib**: For creating visualizations and charts.
+- **json**: For handling data storage and retrieval.
+- **requests**: For making API calls to external services.
+- **datetime**: For managing date and time operations.
+
+You can install these packages using the following command:
+
+```bash
+pip install streamlit pandas numpy matplotlib requests
+pip install streamlit-extras
+
+
 Start your journey toward better health with Nutri-Mentor today!
