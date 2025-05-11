@@ -211,7 +211,6 @@ def get_recipe_details(recipe_id, test_mode=False):
         response = requests.get(url)
         if handle_api_error(response):
             data = response.json()
-            st.write("API Response for Recipe Details:", data)  # Debugging output
             return data
         else:
             return {}
@@ -475,7 +474,7 @@ if st.button("📂 View Saved Recipes"):
         st.error("Error reading the saved recipes file.")
 
 # ------------------ Navigation button to Calories Tracker -----------------------------------
-st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nutrition information based on your goal!</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nutrition based on your goal!</p>', unsafe_allow_html=True)
 
 if st.button("📊 Go to Calories Tracker"):
     switch_page("Calories Tracker")
