@@ -211,7 +211,6 @@ def get_recipe_details(recipe_id, test_mode=False):
         response = requests.get(url)
         if handle_api_error(response):
             data = response.json()
-            st.write("API Response for Recipe Details:", data)  # Debugging output
             return data
         else:
             return {}
