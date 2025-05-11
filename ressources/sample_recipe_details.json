@@ -1,38 +1,46 @@
-[ 
- {
-  "id": 12345,
-  "title": "Grilled Chicken Salad",
-  "readyInMinutes": 30,
-  "nutrition": {
+[
+  {
+    "id": 12345,
+    "title": "Grilled Chicken Salad",
+    "readyInMinutes": 30,
+    "servings": 2,
+    "image": "https://via.placeholder.com/150",
+    "nutrition": {
       "nutrients": [
-          { "name": "Protein", "amount": 25 },
-          { "name": "Calories", "amount": 300 },
-          { "name": "Carbohydrates", "amount": 20 },
-          { "name": "Fat", "amount": 10 }
+        { "name": "Protein", "amount": 25 },
+        { "name": "Calories", "amount": 300 },
+        { "name": "Carbohydrates", "amount": 20 },
+        { "name": "Fat", "amount": 10 }
       ]
-  },
-  "healthinessScore": 85,
-  "dietTags": ["gluten free", "high protein", "healthy"],
-  "ingredients": [
-      "200g chicken breast",
-      "100g mixed greens",
-      "50g cherry tomatoes",
-      "1 tbsp olive oil",
-      "1 tbsp balsamic vinegar",
-      "Salt and pepper to taste"
-  ],
-  "instructions": [
-      "Grill the chicken breast until fully cooked, about 6-8 minutes per side.",
-      "In a large bowl, combine mixed greens and cherry tomatoes.",
-      "Slice the grilled chicken and add it to the salad.",
-      "Drizzle olive oil and balsamic vinegar over the salad.",
-      "Season with salt and pepper, then toss to combine."
-  ]
+    },
+    "healthScore": 85,
+    "diets": ["gluten free", "high protein", "healthy"],
+    "extendedIngredients": [
+      { "original": "200g chicken breast" },
+      { "original": "100g mixed greens" },
+      { "original": "50g cherry tomatoes" },
+      { "original": "1 tbsp olive oil" },
+      { "original": "1 tbsp balsamic vinegar" },
+      { "original": "Salt and pepper to taste" }
+    ],
+    "analyzedInstructions": [
+      {
+        "steps": [
+          { "step": "Grill the chicken breast until fully cooked, about 6-8 minutes per side." },
+          { "step": "In a large bowl, combine mixed greens and cherry tomatoes." },
+          { "step": "Slice the grilled chicken and add it to the salad." },
+          { "step": "Drizzle olive oil and balsamic vinegar over the salad." },
+          { "step": "Season with salt and pepper, then toss to combine." }
+        ]
+      }
+    ]
   },
   {
     "id": 67890,
     "title": "Vegan Pasta",
     "readyInMinutes": 20,
+    "servings": 4,
+    "image": "https://via.placeholder.com/150",
     "nutrition": {
       "nutrients": [
         { "name": "Protein", "amount": 10 },
@@ -41,22 +49,26 @@
         { "name": "Fat", "amount": 5 }
       ]
     },
-    "healthinessScore": 75,
-    "dietTags": ["vegan", "dairy free", "healthy"],
-    "ingredients": [
-      "200g whole wheat pasta",
-      "100g cherry tomatoes",
-      "50g spinach",
-      "2 cloves garlic",
-      "1 tbsp olive oil",
-      "Salt and pepper to taste"
+    "healthScore": 75,
+    "diets": ["vegan", "dairy free", "healthy"],
+    "extendedIngredients": [
+      { "original": "200g whole wheat pasta" },
+      { "original": "100g cherry tomatoes" },
+      { "original": "50g spinach" },
+      { "original": "2 cloves garlic" },
+      { "original": "1 tbsp olive oil" },
+      { "original": "Salt and pepper to taste" }
     ],
-    "instructions": [
-      "Cook the pasta according to package instructions.",
-      "In a pan, heat olive oil and sauté minced garlic until fragrant.",
-      "Add cherry tomatoes and spinach to the pan and cook until softened.",
-      "Drain the pasta and add it to the pan with the vegetables.",
-      "Season with salt and pepper, then toss to combine."
+    "analyzedInstructions": [
+      {
+        "steps": [
+          { "step": "Cook the pasta according to package instructions." },
+          { "step": "In a pan, heat olive oil and sauté minced garlic until fragrant." },
+          { "step": "Add cherry tomatoes and spinach to the pan and cook until softened." },
+          { "step": "Drain the pasta and add it to the pan with the vegetables." },
+          { "step": "Season with salt and pepper, then toss to combine." }
+        ]
+      }
     ]
   },
   {
@@ -71,20 +83,24 @@
         { "name": "Fat", "amount": 12 }
       ]
     },
-    "healthinessScore": 90,
-    "dietTags": ["vegetarian", "dairy free", "healthy"],
-    "ingredients": [
-      "2 slices whole grain bread",
-      "1 ripe avocado",
-      "1 tsp lemon juice",
-      "Salt and pepper to taste",
-      "Optional: red pepper flakes"
+    "healthScore": 90,
+    "diets": ["vegetarian", "dairy free", "healthy"],
+    "extendedIngredients": [
+      { "original": "2 slices whole grain bread" },
+      { "original": "1 ripe avocado" },
+      { "original": "1 tsp lemon juice" },
+      { "original": "Salt and pepper to taste" },
+      { "original": "Optional: red pepper flakes" }
     ],
-    "instructions": [
-      "Toast the slices of bread until golden brown.",
-      "Mash the avocado in a bowl and mix in lemon juice, salt, and pepper.",
-      "Spread the avocado mixture evenly on the toasted bread.",
-      "Sprinkle with red pepper flakes if desired, and serve immediately."
+    "analyzedInstructions": [
+      {
+        "steps": [
+          { "step": "Toast the slices of bread until golden brown." },
+          { "step": "Mash the avocado in a bowl and mix in lemon juice, salt, and pepper." },
+          { "step": "Spread the avocado mixture evenly on the toasted bread." },
+          { "step": "Sprinkle with red pepper flakes if desired, and serve immediately." }
+        ]
+      }
     ]
   }
 ]

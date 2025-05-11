@@ -282,7 +282,10 @@ def filter_recipes_by_goal(recipes, goal):
 def display_recipe(recipe, index):
     with st.container():
         st.write(f"### {recipe['title']}")
-        st.image(recipe['image'], width=150)
+        
+        # Use a placeholder image if no image is available
+        image_url = recipe.get('image', 'https://via.placeholder.com/150')  # Placeholder image
+        st.image(image_url, width=150)
 
         # Fetch and display recipe details
         details = get_recipe_details(recipe["id"], test_mode=test_mode)
@@ -301,7 +304,6 @@ def display_recipe(recipe, index):
 
             if submitted:
                 save_recipe_to_calendar(recipe, selected_date, meal_category, details)
-
 # ------------------ Save recipe to calendar functions -----------------------------------
 def save_recipe_to_calendar(recipe, selected_date, meal_category, details):
     nutrients = details.get("nutrition", {}).get("nutrients", [])
