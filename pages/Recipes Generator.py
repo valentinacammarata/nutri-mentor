@@ -474,7 +474,7 @@ if st.button("📂 View Saved Recipes"):
         st.error("Error reading the saved recipes file.")
 
 # ------------------ Navigation button to Calories Tracker -----------------------------------
-st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nutrition information based on your goal!</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nutrition based on your goal!</p>', unsafe_allow_html=True)
 
 if st.button("📊 Go to Calories Tracker"):
     switch_page("Calories Tracker")
