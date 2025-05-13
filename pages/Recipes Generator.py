@@ -447,4 +447,4 @@ st.markdown('<p class="subtitle">Go to Calories Tracker to manage your daily nut
 
 st.markdown('<div class="active-button">', unsafe_allow_html=True)
 if st.button("📊 Go to Calories Tracker"):      # option to go to calories tracker page
-    switch_page("Calories Tracker")
+    st.switch_page("pages/Calories Tracker.py")

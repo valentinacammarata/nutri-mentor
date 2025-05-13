@@ -39,7 +39,7 @@ st.markdown(f'<div class="description">Enter a food item and its quantity to cal
 
 
 if st.button("Go Back to Calorie Tracker", key="go_back_button"):
-    switch_page("Calories Tracker")
+    st.switch_page("pages/Calories Tracker.py")
 
 # -------------------- LINE SEPARATOR --------------------
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
