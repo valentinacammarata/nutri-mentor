@@ -9,12 +9,14 @@ from dotenv import load_dotenv
 # -------------------- CONFIGURATION OF JSON FILE--------------------
 calendar_recipes_path = "ressources/calendar_recipes.json"
 
-def load_calendar_recipes():
+# Load existing recipes from JSON file
+def load_calendar_recipes(): 
     if os.path.exists(calendar_recipes_path):
         with open(calendar_recipes_path, "r") as f:
             return json.load(f)
     return []
 
+# Save recipes to JSON file
 def save_calendar_recipes(data):
     os.makedirs(os.path.dirname(calendar_recipes_path), exist_ok=True)
     with open(calendar_recipes_path, "w") as f:
@@ -44,7 +46,7 @@ st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
 # -------------------- CALENDAR  --------------------
 st.markdown("<div style='text-align: center;'><h2 class='subtitle'>📅 Select the Day for Your Breakfast's Entries</h2></div>", unsafe_allow_html=True)
 selected_date = st.date_input("Select a date for your meal:", value=date.today(), min_value=date(2000, 1, 1), max_value=date(2100, 12, 31))
-date_key = selected_date.strftime("%Y-%m-%d")
+date_key = selected_date.strftime("%Y-%m-%d") # Format the date as a string
 
 # -------------------- USDA API --------------------
 API_KEY = os.getenv("API_KEY_USDA")
@@ -89,7 +91,7 @@ goals = {
 max_values = goals.get(user_goal, {"calories": 2200, "protein": 100, "carbs": 275, "fat": 70})
 
 # -------------------- SEARCH FOR FOOD BAR --------------------
-st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍎 Search for Food Items</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍎 Search for Food Items</h2>", unsafe_allow_html=True) #title
 
 food_query = st.text_input("Search for a food", placeholder="E.g. Apple,Banana, Coffee")
 quantity = st.number_input(    "Enter the consumed quantity (in grams or ml):",     min_value=1,     value=100,     step=1)
@@ -153,6 +155,7 @@ if meals_today:
     selected_meal = next(m for m in meals_today if m["recipe_title"] == selected_meal_name)
     nutrition = selected_meal["nutrition"]
 
+        # Display the selected meal's nutritional values
     with st.expander("View Nutritional Information"):
         st.write(f"- **Calories**: {nutrition['calories']} kcal")
         st.write(f"- **Protein**: {nutrition['protein']} g")
@@ -213,7 +216,7 @@ st.markdown("<h2 class='subtitle' style='text-align: center; color: green; margi
 
 col1, col2, col3= st.columns(3)
 
-
+# Create buttons for each meal type
 with col1:
     if st.button("🥗 Lunch"):
         st.switch_page("pages/Calories Tracker - Lunch.py")
@@ -227,7 +230,7 @@ with col3:
         st.switch_page("pages/Calories Tracker - Snack.py")
 
 
-# Sidebar ausblenden
+# ------------HIDE SIDEBAR---------------------
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {

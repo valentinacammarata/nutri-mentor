@@ -216,7 +216,7 @@ st.markdown("<h2 class='subtitle' style='text-align: center; color: green;'>🍽
 
 col1, col2, col3= st.columns(3)
 
-
+#buttons to navigate to other meal pages
 with col1:
     if st.button("☕ Breakfast"):
         st.switch_page("pages/Calories Tracker - Breakfast.py")
@@ -229,7 +229,7 @@ with col3:
     if st.button("🍫 Snack"):
         st.switch_page("pages/Calories Tracker - Snack.py")
 
-# Sidebar ausblenden
+#--------------HIDE SIDEBAR--------------------
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {

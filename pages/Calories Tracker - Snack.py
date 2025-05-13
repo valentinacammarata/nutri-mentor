@@ -232,7 +232,7 @@ with col3:
         st.switch_page("pages/Calories Tracker - Dinner.py")
 
 
-# Sidebar ausblenden
+#--------------- HIDE SIDEBAR --------------------
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {

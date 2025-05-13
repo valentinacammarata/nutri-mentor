@@ -10,12 +10,14 @@ from dotenv import load_dotenv
 # -------------------- JSON FILE CONFIGURATION --------------------
 calendar_recipes_path = "ressources/calendar_recipes.json"
 
+# Load existing recipes from JSON file
 def load_calendar_recipes():
     if os.path.exists(calendar_recipes_path):
         with open(calendar_recipes_path, "r") as f:
             return json.load(f)
     return []
 
+# Save recipes to JSON file
 def save_calendar_recipes(data):
     os.makedirs(os.path.dirname(calendar_recipes_path), exist_ok=True)
     with open(calendar_recipes_path, "w") as f:
@@ -230,7 +232,7 @@ with col3:
         st.switch_page("pages/Calories Tracker - Snack.py")
 
 
-# Sidebar ausblenden
+#-------------------------- HIDE SIDEBAR --------------------
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {
