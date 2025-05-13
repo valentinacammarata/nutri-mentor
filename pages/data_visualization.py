@@ -222,7 +222,12 @@ if not df.empty:
     st.line_chart(df.set_index("Date")["Weight"])
 
 st.markdown("<div style='margin-top: 60px;'></div>", unsafe_allow_html=True)
+
     # === MACHINE LEARNING VORHERSAGE: GEWICHTSPROGNOSE FÜR 30 TAGE ===
+    # 🟢 Dieses Modell verwendet Random Forest Regression zur Gewichtsvorhersage über mehrere Tage hinweg.
+# 🟢 Es basiert auf den letzten 3 Gewichtseinträgen und berechnet daraus Durchschnitt, Standardabweichung und Trend.
+# 🟢 Ziel ist es, den nächsten realistischen Gewichtsverlauf auf Basis vergangener Muster zu prognostizieren.
+
 if len(df) >= 5:
     st.subheader("🤖 Weight Forecast")
     st.markdown("""
@@ -235,6 +240,11 @@ if len(df) >= 5:
     forecast_days = st.slider("Forecast range (days)", min_value=7, max_value=30, value=30, step=1)
 
     # === Datenaufbereitung ===
+    # 🟢 1. Datenvorbereitung: Es werden Features aus den letzten 3 Einträgen berechnet:
+#    - Weight_lag1, lag2, lag3: Die letzten drei Gewichtseinträge
+#    - Weight_avg: Durchschnitt der drei Werte
+#    - Weight_std: Standardabweichung der drei Werte (Schwankung)
+#    - Weight_delta: Veränderung zwischen den letzten zwei Einträgen
     df_ml = df.copy()
     df_ml["Weight_lag1"] = df_ml["Weight"].shift(1)
     df_ml["Weight_lag2"] = df_ml["Weight"].shift(2)
@@ -245,13 +255,25 @@ if len(df) >= 5:
     df_ml = df_ml.dropna()
 
     # === Modelltraining ===
+    # 🟢 2. Training des Random Forest Regressors
+#    - Das Modell lernt aus dem Zusammenhang der oben berechneten Merkmale (X) und dem tatsächlichen Gewicht (y)
+#    - Random Forest kombiniert viele Entscheidungsbäume für robuste Vorhersagen
     X = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3", "Weight_avg", "Weight_std", "Weight_delta"]]
     y = df_ml["Weight"]
 
     model = RandomForestRegressor(n_estimators=200, random_state=50)
     model.fit(X, y)
 
-    # === Forecast vorbereiten ===
+# 🟢 3. Forecast: Auf Basis der letzten 3 bekannten Werte wird iterativ ein Gewicht pro Tag vorhergesagt
+#    - Nach jeder Vorhersage werden die Werte verschoben, sodass immer 3 neue aktuelle Gewichte als Input dienen
+#    - Es wird zusätzlich ein kleiner zufälliger Rauschwert (Noise) hinzugefügt, um unrealistische Glättung zu vermeiden
+# 🟢 Um realistischere Ergebnisse zu erzielen, wird dem Vorhersagewert bei jeder Iteration ein kleiner Zufallswert (sogenannter "Noise") hinzugefügt.
+#    Dies hat mehrere Vorteile: Zum einen verhindert es, dass der Random Forest bei ähnlichen Eingabewerten immer exakt denselben Ausgabewert liefert –
+#    was zu einer unnatürlich flachen und gleichförmigen Gewichtskurve führen würde. Zum anderen spiegelt der Noise die typischen natürlichen Gewichtsschwankungen
+#    im Alltag wider, etwa durch Wasserhaushalt oder Essgewohnheiten. Der verwendete Zufallswert folgt einer Normalverteilung mit einem Mittelwert von 0
+#    und einer Standardabweichung von 0.25 kg, was einer realistischen täglichen Gewichtsdynamik entspricht. Besonders bei iterativen Prognosen – also wenn
+#    die Vorhersage des einen Tages zur Grundlage für die nächste wird – sorgt dieser kleine Noise dafür, dass sich die Werte realitätsnah entwickeln
+#    und nicht in eine künstliche Konstanz abgleiten.
     last_known_w1 = df["Weight"].iloc[-1]
     last_known_w2 = df["Weight"].iloc[-2] if len(df) >= 2 else last_known_w1
     last_known_w3 = df["Weight"].iloc[-3] if len(df) >= 3 else last_known_w2
@@ -267,6 +289,9 @@ if len(df) >= 5:
         last_known_w3, last_known_w2, last_known_w1 = last_known_w2, last_known_w1, next_pred
 
     # === Forecast anzeigen ===
+    # 🟢 4. Ergebnisanzeige:
+#    - Ein Liniendiagramm zeigt den bisherigen Verlauf sowie die Prognose (dargestellt mit gestrichelter Linie)
+#    - Zusätzlich können alle Prognosewerte in einer Tabelle angezeigt werden
     max_date = pd.to_datetime(df["Date"].max(), errors="coerce")
     if pd.notna(max_date):
         future_dates = pd.date_range(max_date + pd.Timedelta(days=1), periods=forecast_days)
