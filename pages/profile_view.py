@@ -143,7 +143,7 @@ with st.container():
         st.metric("Gender", profile_data.get("gender", "N/A"))
     with col2:
         goals = ", ".join(profile_data.get("goals", []))
-        st.metric("Goal(s)", goals if goals else "N/A")
+        st.metric("Goal", profile_data.get("goal", "N/A"))
         st.metric("Diet", profile_data.get("diet", "N/A"))
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -292,10 +292,3 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-    # Footer
-st.markdown("""
-<div id="bottom"></div>
-<div class="footer" style="margin-top: 120px;">
-    Created by Team Nutri • 2025 • Made with ❤️
-</div>
-""", unsafe_allow_html=True)

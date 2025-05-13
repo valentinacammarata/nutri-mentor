@@ -48,7 +48,7 @@ with st.form("profile_form"):
             "name": name,
             "age": age,
             "gender": gender,
-            "goals": selected_goals,
+            "goal": selected_goals,
             "diet": selected_diet
         }
         
@@ -64,10 +64,3 @@ with st.form("profile_form"):
             time.sleep(2)
         st.switch_page("pages/profile_view.py")
 
-# Footer
-st.markdown("""
-<div id="bottom"></div>
-<div class="footer" style="margin-top: 120px;">
-    Created by Team Nutri • 2025 • Made with ❤️
-</div>
-""", unsafe_allow_html=True)

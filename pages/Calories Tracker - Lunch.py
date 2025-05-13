@@ -230,13 +230,6 @@ with col3:
     if st.button("🍫 Snack"):
         st.switch_page("pages/Calories Tracker - Snack.py")
 
-# Footer
-st.markdown("""
-<div id="bottom"></div>
-<div class="footer" style="margin-top: 120px;">
-    Created by Team Nutri • 2025 • Made with ❤️
-</div>
-""", unsafe_allow_html=True)
 
 # Sidebar ausblenden
 st.markdown("""
