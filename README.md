@@ -129,9 +129,15 @@ Update the application's configuration file or environment variables with these 
 ## How to Use the Machine Learning Features
 
 ### 1. **Enable Machine Learning**
-- Ensure the required Python libraries (`scikit-learn`, `pandas`, `numpy`) are installed:
+- Ensure the required Python libraries (`scikit-learn`, `pandas`, `numpy`, `matplotlib`) are installed:
    ```bash
-   pip install scikit-learn pandas numpy
+   pip install scikit-learn pandas numpy matplotlib
+   ```
+
+- Import the necessary modules in your script:
+   ```python
+   import matplotlib.pyplot as plt
+   from sklearn.ensemble import RandomForestRegressor
    ```
 
 ### 2. **Train the Models**
