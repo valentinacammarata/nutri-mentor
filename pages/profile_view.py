@@ -290,3 +290,12 @@ with col3:
         st.switch_page("pages/Calories Tracker.py")
     st.markdown("<div class='dashboard-desc'>Use the calorie tracker to manage your nutritional intake precisely.</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+    # Footer
+st.markdown("""
+<div id="bottom"></div>
+<div class="footer" style="margin-top: 120px;">
+    Created by Team Nutri • 2025 • Made with ❤️
+</div>
+""", unsafe_allow_html=True)
