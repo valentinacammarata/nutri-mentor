@@ -142,12 +142,11 @@ def load_user_preferences():
     try:
         with open('ressources/profile_data.json', 'r') as f:
             data = json.load(f)
-            goals = data.get("goals", [])
-            goal = goals[0] if goals else "just eat Healthier :)"
-            diet = data.get("diet", "No Preference")
+            goal = data.get("goal")  # Get the goal exactly as it is in the file
+            diet = data.get("diet")  # Get the diet exactly as it is in the file
             return {"goal": goal, "diet": diet}
     except FileNotFoundError:
-        return {"goal": "just eat Healthier :)", "diet": "No Preference"}
+        return {"goal": None, "diet": None}  # Return None if the file is not found
 
 # Get user preferences
 user_prefs = load_user_preferences()
