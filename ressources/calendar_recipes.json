@@ -20,5 +20,38 @@
             "fat": 7.13,
             "protein": 18.91
         }
+    },
+    {
+        "recipe_title": "Apple",
+        "selected_date": "2025-05-14",
+        "meal_category": "Breakfast",
+        "nutrition": {
+            "calories": 52.0,
+            "carbohydrates": 14.3,
+            "fat": 0.65,
+            "protein": 0.0
+        }
+    },
+    {
+        "recipe_title": "Protein bar",
+        "selected_date": "2025-05-13",
+        "meal_category": "Snack",
+        "nutrition": {
+            "calories": 294.0,
+            "carbohydrates": 47.1,
+            "fat": 13.2,
+            "protein": 26.5
+        }
+    },
+    {
+        "recipe_title": "Protein bar",
+        "selected_date": "2025-05-14",
+        "meal_category": "Snack",
+        "nutrition": {
+            "calories": 294.0,
+            "carbohydrates": 47.1,
+            "fat": 13.2,
+            "protein": 26.5
+        }
     }
 ]

@@ -224,64 +224,73 @@ if not df.empty:
 st.markdown("<div style='margin-top: 60px;'></div>", unsafe_allow_html=True)
     # === MACHINE LEARNING VORHERSAGE: GEWICHTSPROGNOSE FÜR 30 TAGE ===
 if len(df) >= 5:
-            st.subheader("🤖 Weight Forecast")
-            st.markdown("""
-            <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
-            This section uses a machine learning model (Random Forest Regression) to forecast your weight for the next days based on your recent history.<br>
-            It uses the last 3 entries and their average as predictors. The more data you enter, the more accurate this prediction becomes.
-            </p>
-            """, unsafe_allow_html=True)
-            forecast_days = st.slider("Forecast range (days)", min_value=7, max_value=30, value=30, step=1)
-            
-            df_ml = df.copy()
-            df_ml["Weight_lag1"] = df_ml["Weight"].shift(1)
-            df_ml["Weight_lag2"] = df_ml["Weight"].shift(2)
-            df_ml["Weight_lag3"] = df_ml["Weight"].shift(3)
-            df_ml["Weight_avg"] = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3"]].mean(axis=1)
-            df_ml = df_ml.dropna()
+    st.subheader("🤖 Weight Forecast")
+    st.markdown("""
+    <p style='text-align: center; font-size: 1.05em; color: #2f5732;'>
+    This section uses a machine learning model (Random Forest Regression) to forecast your weight for the next days based on your recent history.<br>
+    It uses the last 3 entries and their average, variability, and trend as predictors. The more data you enter, the more accurate this prediction becomes.
+    </p>
+    """, unsafe_allow_html=True)
 
-            X = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3", "Weight_avg"]]
-            y = df_ml["Weight"]
+    forecast_days = st.slider("Forecast range (days)", min_value=7, max_value=30, value=30, step=1)
 
-            model = RandomForestRegressor(n_estimators=100, random_state=42)
-            model.fit(X, y)
+    # === Datenaufbereitung ===
+    df_ml = df.copy()
+    df_ml["Weight_lag1"] = df_ml["Weight"].shift(1)
+    df_ml["Weight_lag2"] = df_ml["Weight"].shift(2)
+    df_ml["Weight_lag3"] = df_ml["Weight"].shift(3)
+    df_ml["Weight_avg"] = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3"]].mean(axis=1)
+    df_ml["Weight_std"] = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3"]].std(axis=1)
+    df_ml["Weight_delta"] = df_ml["Weight_lag1"] - df_ml["Weight_lag2"]
+    df_ml = df_ml.dropna()
 
-            last_known_w1 = df["Weight"].iloc[-1]
-            last_known_w2 = df["Weight"].iloc[-2] if len(df) >= 2 else last_known_w1
-            last_known_w3 = df["Weight"].iloc[-3] if len(df) >= 3 else last_known_w2
-            predictions = []
+    # === Modelltraining ===
+    X = df_ml[["Weight_lag1", "Weight_lag2", "Weight_lag3", "Weight_avg", "Weight_std", "Weight_delta"]]
+    y = df_ml["Weight"]
 
-            for _ in range(forecast_days):
-                avg = np.mean([last_known_w1, last_known_w2, last_known_w3])
-                features = [[last_known_w1, last_known_w2, last_known_w3, avg]]
-                next_pred = model.predict(features)[0]
-                predictions.append(next_pred)
-                last_known_w3, last_known_w2, last_known_w1 = last_known_w2, last_known_w1, next_pred
+    model = RandomForestRegressor(n_estimators=200, random_state=50)
+    model.fit(X, y)
 
-            max_date = pd.to_datetime(df["Date"].max(), errors="coerce")
-            if pd.notna(max_date):
-                future_dates = pd.date_range(pd.to_datetime(max_date) + pd.Timedelta(days=1), periods=forecast_days)
-                forecast_df = pd.DataFrame({"Date": future_dates, "Predicted Weight": predictions})
+    # === Forecast vorbereiten ===
+    last_known_w1 = df["Weight"].iloc[-1]
+    last_known_w2 = df["Weight"].iloc[-2] if len(df) >= 2 else last_known_w1
+    last_known_w3 = df["Weight"].iloc[-3] if len(df) >= 3 else last_known_w2
+    predictions = []
 
-                st.markdown(f"📅 **{forecast_days}-Day Weight Forecast**")
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.plot(pd.to_datetime(df["Date"], errors="coerce"), df["Weight"], label="Actual Weight", marker='o')
-                ax.plot(pd.to_datetime(forecast_df["Date"], errors="coerce"), forecast_df["Predicted Weight"], label="Forecast", linestyle='--', marker='x', color='orange')
-                ax.set_xlabel("Date")
-                ax.set_ylabel("Weight (kg)")
-                ax.set_title(f"Weight Forecast (Next {forecast_days} Days)")
-                ax.legend()
-                ax.grid(True)
-                st.pyplot(fig)
+    for _ in range(forecast_days):
+        avg = np.mean([last_known_w1, last_known_w2, last_known_w3])
+        std = np.std([last_known_w1, last_known_w2, last_known_w3])
+        delta = last_known_w1 - last_known_w2
+        features = [[last_known_w1, last_known_w2, last_known_w3, avg, std, delta]]
+        next_pred = model.predict(features)[0] + np.random.normal(0, 0.25)  # Noise einfügen
+        predictions.append(next_pred)
+        last_known_w3, last_known_w2, last_known_w1 = last_known_w2, last_known_w1, next_pred
 
-                if len(df) < 30:
-                    st.info("ℹ️ Your prediction may be unstable. For more accurate forecasts, it's recommended to have at least 30 data entries.")
+    # === Forecast anzeigen ===
+    max_date = pd.to_datetime(df["Date"].max(), errors="coerce")
+    if pd.notna(max_date):
+        future_dates = pd.date_range(max_date + pd.Timedelta(days=1), periods=forecast_days)
+        forecast_df = pd.DataFrame({"Date": future_dates, "Predicted Weight": predictions})
 
-                with st.expander("🔍 Show forecasted values"):
-                    st.dataframe(forecast_df, use_container_width=True)
-            else:
-                st.warning("❗ Date column is missing or invalid, forecast could not be generated.")
+        st.markdown(f"📅 **{forecast_days}-Day Weight Forecast**")
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.plot(pd.to_datetime(df["Date"], errors="coerce"), df["Weight"], label="Actual Weight", marker='o')
+        ax.plot(forecast_df["Date"], forecast_df["Predicted Weight"], label="Forecast", linestyle='--', marker='x', color='orange')
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Weight (kg)")
+        ax.set_title(f"Weight Forecast (Next {forecast_days} Days)")
+        ax.legend()
+        ax.grid(True)
+        st.pyplot(fig)
 
+        if len(df) < 30:
+            st.info("ℹ️ Your prediction may be unstable. For more accurate forecasts, it's recommended to have at least 30 data entries.")
+
+        with st.expander("🔍 Show forecasted values"):
+            st.dataframe(forecast_df, use_container_width=True)
+    else:
+        st.warning("❗ Date column is missing or invalid, forecast could not be generated.")
+        
 # ================= ADVANCED BODY COMPOSITION SECTION =================
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
