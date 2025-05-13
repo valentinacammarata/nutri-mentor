@@ -239,3 +239,14 @@ st.markdown("""
     Created by Team Nutri • 2025 • Made with ❤️
 </div>
 """, unsafe_allow_html=True)
+
+# Sidebar ausblenden
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] {
+            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)

@@ -388,3 +388,14 @@ with col4:
     st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("🍫 Snack"):
         st.switch_page("pages/Calories Tracker - Snack.py")
+        
+# Sidebar ausblenden
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] {
+            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
