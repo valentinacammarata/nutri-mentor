@@ -1,31 +1,36 @@
 {
   "results": [
-      {
-          "id": 12345,
-          "title": "Grilled Chicken Salad",
-          "image": "https://example.com/image.jpg",
-          "nutrition": {
-              "nutrients": [
-                  { "name": "Protein", "amount": 25 },
-                  { "name": "Calories", "amount": 300 },
-                  { "name": "Carbohydrates", "amount": 20 },
-                  { "name": "Fat", "amount": 10 }
-              ]
-          }
-      },
-      {
-          "id": 67890,
-          "title": "Vegan Pasta",
-          "image": "https://example.com/image2.jpg",
-          "nutrition": {
-              "nutrients": [
-                  { "name": "Protein", "amount": 10 },
-                  { "name": "Calories", "amount": 400 },
-                  { "name": "Carbohydrates", "amount": 50 },
-                  { "name": "Fat", "amount": 5 }
-              ]
-          }
+    {
+      "id": 12345,
+      "title": "Grilled Chicken Salad",
+      "image": "https://via.placeholder.com/150", 
+      "readyInMinutes": 30,
+      "servings": 2,
+      "healthScore": 85,
+      "nutrition": {
+        "nutrients": [
+          { "name": "Protein", "amount": 25 },
+          { "name": "Calories", "amount": 300 },
+          { "name": "Carbohydrates", "amount": 20 },
+          { "name": "Fat", "amount": 10 }
+        ]
       }
+    },
+    {
+      "id": 67890,
+      "title": "Vegan Pasta",
+      "image": "https://via.placeholder.com/150", 
+      "readyInMinutes": 20,
+      "servings": 4,
+      "healthScore": 75,
+      "nutrition": {
+        "nutrients": [
+          { "name": "Protein", "amount": 10 },
+          { "name": "Calories", "amount": 400 },
+          { "name": "Carbohydrates", "amount": 50 },
+          { "name": "Fat", "amount": 5 }
+        ]
+      }
+    }
   ]
 }
-  

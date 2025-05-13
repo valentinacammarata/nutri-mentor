@@ -7,68 +7,30 @@ import json
 
 active_page = "Calories"
 
-# CSS for consistent button styling
-st.markdown(f"""
-    <style>
-        .nav-container {{
-            display: flex;
-            justify-content: center;
-            gap: 1.2rem;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }}
-        .stButton > button {{
-            background-color: #388e3c !important;
-            color: white !important;
-            font-weight: bold !important;
-            border-radius: 8px !important;
-            padding: 0.5rem 1.2rem !important;
-            border: none !important;
-        }}
-        .active-button > button {{
-            background-color: white !important;
-            color: #388e3c !important;
-            border: 2px solid #388e3c !important;
-        }}
-    </style>
-""", unsafe_allow_html=True)
-
 # Centered navigation with switch_page
 st.markdown('<div class="nav-container">', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 
 with col1:
-    if active_page == "Profile":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("👤 Profile"):
         st.switch_page("pages/profile_view.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
-    if active_page == "Visual Data":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("📊 Visual Data"):
         st.switch_page("pages/data_visualization.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
-    if active_page == "Recipes":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("🥗 Recipes"):
         st.switch_page("pages/Recipes Generator.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col4:
-    if active_page == "Calories":
-        st.markdown('<div class="active-button">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("📒 Calories"):
         st.switch_page("pages/Calories Tracker.py")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -94,14 +56,15 @@ st.markdown(f'<div class="description">Manage your diet more intelligently, effo
 
 # -------------------- SCROLL-DOWN BUTTON --------------------
 st.markdown("""<div style="text-align: center; margin-top: 25px;">
-        <a href="#manual-entry" class="custom-scroll-button">⬇️ Go to Manual Food Entry</a>
+        <a href="#manual-entry" class="active-button">⬇️ Go to Manual Food Entry</a>
     </div>
 """, unsafe_allow_html=True)
 
 # -------------------- SWITCH TO RECIPES GENERATOR --------------------
-    #  button to navigate to the recipes generator page
+st.markdown('<div class="active-button">', unsafe_allow_html=True)
 if st.button("🍳 Go to Recipes Generator"):
     switch_page("Recipes Generator")
+st.markdown("</div>", unsafe_allow_html=True)
 
 # -------------------- LINE SEPARATOR --------------------
 st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
@@ -324,6 +287,7 @@ if "recipes" not in st.session_state:
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     st.button("⬅ Previous", key="prev_month", on_click=previous_month)
 
 with col2:
@@ -403,26 +367,24 @@ st.markdown("""
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("☕ Breakfast"):
         st.switch_page("pages/Calories Tracker - Breakfast.py")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("🥗 Lunch"):
         st.switch_page("pages/Calories Tracker - Lunch.py")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("🍝 Dinner"):
         st.switch_page("pages/Calories Tracker - Dinner.py")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col4:
+    st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("🍫 Snack"):
         st.switch_page("pages/Calories Tracker - Snack.py")
-
-
-        # Footer
-st.markdown("""
-<div id="bottom"></div>
-<div class="footer" style="margin-top: 120px;">
-    Created by Team Nutri • 2025 • Made with ❤️
-</div>
-""", unsafe_allow_html=True)

@@ -22,7 +22,7 @@ div.stMarkdown .description {
     text-align: center;
     font-size: 20px !important;
     color: #555555;
-    font-style: italic;
+    font-style: normal;
     margin: 40px auto 20px auto;
 }
 
@@ -51,33 +51,62 @@ div.stCheckbox {
     margin-top: 20px;         /* Optional: adds some space above the checkbox */
 }
 
-/* Button styling */
-div.stButton {
+/* Nav container styling */
+.nav-container {
     display: flex;
-    justify-content: center;  /* Horizontally center the button */
-    align-items: center;      /* Vertically center the button */
-    height: auto;             /* Automatically adjust height based on content */
-    text-align: center;
-    margin-top: 20px;         /* Optional: adds some space above the button */
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
-div.stButton > button {
-    background-color: transparent;
-    color: #3E8E41;
+/* General button styling (applies to ALL Streamlit buttons) */
+.stButton {
+    display: flex;
+    justify-content: center; /* Center align buttons horizontally */
+    align-items: center; /* Center align buttons vertically */
+    margin: 20px auto; /* Center the button container and add spacing */
+}
+
+.stButton > button {
+    background-color: #388e3c !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.2rem !important;
+    border: none !important;
     font-size: 16px;
-    padding: 10px 24px;
-    border: 3px solid #3E8E41;
-    border-radius: 12px;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    margin: 0 auto;  /* Center the button horizontally */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-div.stButton > button:hover {
-    background-color: #3E8E41;
-    color: white;
-    border-color: #3E8E41;
+/* Optional hover effect */
+.stButton > button:hover {
+    background-color: #2e7d32 !important;
+    color: white !important;
 }
 
+/* Style for active nav button */
+.active-button > button {
+    background-color: #388e3c !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.2rem !important;
+    border: none !important;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px auto; /* Adjust margin for consistent spacing */
+    display: inline-flex; /* Ensure proper alignment */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+}
+
+.active-button > button:hover {
+    background-color: #2e7d32 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
 
 /* Recipe card */
 .recipe-card {
@@ -189,65 +218,32 @@ div.stButton > button:hover {
 }
 
 .custom-scroll-button {
-    display: inline-block;
-    background-color: #3E8E41;
-    color: white;
-    padding: 12px 28px; /* Slightly increased padding for better appearance */
-    border-radius: 15px; /* Adjusted border radius for a smoother look */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #388e3c !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.2rem !important;
+    border: none !important;
     font-size: 16px;
-    font-weight: bold; /* Made font weight bold for better emphasis */
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform transition */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added subtle shadow for depth */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
 }
 
 .custom-scroll-button:hover {
-    background-color: #2e6f32;
-    transform: translateY(-2px); /* Added hover effect for a slight lift */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    background-color: #2e7d32 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Calories Tracker styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 body {
     background-color: #f8f9fa;
     font-family: 'Inter', sans-serif;
-}
-
-.dashboard-container {
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 20px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-}
-
-.subtitle {
-    font-size: 18px;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #666;
-}
-
-.circle-container {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(#4caf50 75%, #e0e0e0 0%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    position: relative;
-}
-
-.circle-text {
-    font-size: 32px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
 }
 
 .kcal-label {
@@ -255,36 +251,10 @@ body {
     color: #666;
 }
 
-.stats-row {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.stats-text {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
-
 .label-text {
     font-size: 14px;
     color: #666;
     text-align: center;
-}
-
-.progress-bar {
-    height: 8px;
-    border-radius: 5px;
-    background-color: #e0e0e0;
-    margin-top: 5px;
-}
-
-.progress {
-    height: 100%;
-    border-radius: 5px;
-    background-color: #4caf50;
 }
 
 .dashboard-box {
@@ -312,21 +282,3 @@ body {
     font-size: 16px;
     font-weight: bold;
 }
-
-.custom-scroll-button {
-    background-color: transparent;
-    color: #3E8E41;
-    font-size: 16px;
-    padding: 10px 24px;
-    border: 3px solid #3E8E41;
-    border-radius: 12px;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    margin: 0 auto;  
-}
-
-.custom-scroll-button:hover {
-    background-color: #3E8E41;
-    color: white;
-    border-color: #3E8E41;
-}
-
