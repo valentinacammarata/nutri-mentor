@@ -75,5 +75,27 @@
             "fat": 6.25,
             "protein": 12.5
         }
+    },
+    {
+        "recipe_title": "Salad",
+        "selected_date": "2025-05-11",
+        "meal_category": "Lunch",
+        "nutrition": {
+            "calories": 226.5,
+            "carbohydrates": 40.5,
+            "fat": 6.92,
+            "protein": 3.94
+        }
+    },
+    {
+        "recipe_title": "Apple",
+        "selected_date": "2025-05-11",
+        "meal_category": "Breakfast",
+        "nutrition": {
+            "calories": 52.0,
+            "carbohydrates": 14.3,
+            "fat": 0.65,
+            "protein": 0.0
+        }
     }
 ]
