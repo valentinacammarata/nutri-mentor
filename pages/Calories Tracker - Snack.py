@@ -232,7 +232,7 @@ with col3:
         st.switch_page("pages/Calories Tracker - Dinner.py")
 
 
-# Sidebar ausblenden
+#--------------- HIDE SIDEBAR --------------------
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {
@@ -242,3 +242,5 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+
+# Code developed with the help of ChatGPT and Copilot.

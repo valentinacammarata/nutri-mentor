@@ -64,3 +64,4 @@ with st.form("profile_form"):
             time.sleep(2)
         st.switch_page("pages/profile_view.py")
 
+# Code developed with the help of ChatGPT and Copilot.

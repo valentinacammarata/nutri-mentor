@@ -5,12 +5,13 @@ import calendar
 import matplotlib.pyplot as plt
 import json
 
-active_page = "Calories"
+active_page = "Calories"  # Set the active page name
 
 # Centered navigation with switch_page
 st.markdown('<div class="nav-container">', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 
+# Navigation buttons for different pages
 with col1:
     st.markdown('<div class="active-button">', unsafe_allow_html=True)
     if st.button("👤 Profile"):
@@ -388,7 +389,7 @@ with col4:
     if st.button("🍫 Snack"):
         st.switch_page("pages/Calories Tracker - Snack.py")
         
-# Sidebar ausblenden
+#------------- HIDE SIDEBAR -------------
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {
@@ -398,3 +399,5 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+
+# Code developed with the help of ChatGPT and Copilot.

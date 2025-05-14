@@ -489,3 +489,5 @@ if len(comp_df) >= 2:
         })
 
         st.dataframe(comparison_df, use_container_width=True)
+
+# Code developed with the help of ChatGPT and Copilot.
