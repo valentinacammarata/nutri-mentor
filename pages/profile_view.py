@@ -292,3 +292,4 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# Code developed with the help of ChatGPT and Copilot.
