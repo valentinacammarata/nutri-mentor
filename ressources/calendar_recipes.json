@@ -1,2 +1,13 @@
 [
+    {
+        "recipe_title": "Banana",
+        "selected_date": "2025-05-15",
+        "meal_category": "Breakfast",
+        "nutrition": {
+            "calories": 249.6,
+            "carbohydrates": 32.48,
+            "fat": 5.0,
+            "protein": 10.0
+        }
+    }
 ]
